@@ -4,7 +4,7 @@ import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import org.springframework.web.bind.MethodArgumentNotValidException;
+
 import ru.yandex.practicum.filmorate.model.Film;
 
 
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class FilmControllerTest {
     FilmController filmController;
-    final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+    static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
     @BeforeEach
     public void beforeEach() {
