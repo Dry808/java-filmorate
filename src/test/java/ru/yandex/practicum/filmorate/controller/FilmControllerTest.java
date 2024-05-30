@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.controller;
 
+import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +14,9 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Проверяется поля описанные в п
- */
-
-public class FilmControllerTest {
+class FilmControllerTest {
     FilmController filmController;
+    final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
     @BeforeEach
     public void beforeEach() {
@@ -48,8 +46,48 @@ public class FilmControllerTest {
                 .duration(Duration.ofMinutes(90))
                 .build();
 
-        filmController.addFilm(film);
+        assertThrows(ValidationException.class, () -> filmController.addFilm(film));
+    }
 
-        assertThrows(MethodArgumentNotValidException.class, () -> filmController.addFilm(film));
+    @Test
+    void addFilmWithWrongDescriptionSize() {
+        Film film = Film.builder()
+                .name("Лодка")
+                .description("В поисках спасения, человек вступает в странствие, " +
+                        "окутанное загадочными приключениями и захватывающими историческими событиями. " +
+                        "Он сталкивается с врагами, которые пытаются уничтожить его, и встречает новых союзников, " +
+                        "которые помогают ему преодолевать трудности.")
+                .releaseDate(LocalDate.of(1995, 12, 18))
+                .duration(Duration.ofMinutes(90))
+                .build();
+
+        assertTrue(film.getDescription().length() > 200);
+        assertThrows(ValidationException.class, () -> filmController.addFilm(film));
+    }
+
+    @Test
+    void addFilmWithWrongDateRelease() {
+        Film film = Film.builder()
+                .name("Человек-паук")
+                .description("Супергерой спасает мир")
+                .releaseDate(LocalDate.of(1895, 12, 27))
+                .duration(Duration.ofMinutes(120))
+                .build();
+
+        assertTrue(film.getReleaseDate().isBefore(CINEMA_BIRTHDAY));
+        assertThrows(ValidationException.class, () -> filmController.addFilm(film));
+    }
+
+    @Test
+    void addFilmWithWrongDuration() {
+        Film film = Film.builder()
+                .name("Человек-паук")
+                .description("Супергерой спасает мир")
+                .releaseDate(LocalDate.of(1995, 12, 29))
+                .duration(Duration.ofMinutes(-120))
+                .build();
+
+        assertTrue(film.getDuration().isNegative());
+        assertThrows(ValidationException.class, () -> filmController.addFilm(film));
     }
 }

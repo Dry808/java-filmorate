@@ -8,6 +8,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
+import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.UpdateGroup;
 
 import java.time.LocalDate;
@@ -32,17 +33,12 @@ public class FilmController {
     public Film addFilm(@Validated(CreateGroup.class) @RequestBody Film film) {
         log.info("Добавляем новый фильм: {}", film);
 
-        if (film.getReleaseDate().isBefore(CINEMA_BIRTHDAY)) {
-            log.error("Попытка добавить фильм с датой релиза раньше 28 декабря 1895 года;");
-            throw new ValidationException("Дата релиза не может быть раньше 28 декабря 1895 года;");
-        }
-        if (film.getDuration().isNegative()) {
-            log.error("Попытка добавить фильм с отрицательной продолжительностью");
-            throw new ValidationException("Продолжительность фильма не может быть отрицательной");
+        if (!ModelValidator.validateFilm(film)) { // проверка
+            throw new ValidationException(ModelValidator.currentError);
         }
         film.setId(getNextFilmId()); // установили id фильма
         films.put(film.getId(), film);
-        log.info("Фильм успешно добавлен с идентификатором: {}", film.getId());
+        log.info("Фильм успешно добавлен с ID: {}", film.getId());
         return film;
     }
 

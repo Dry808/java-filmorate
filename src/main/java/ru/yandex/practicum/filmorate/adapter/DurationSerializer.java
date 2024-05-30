@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.Duration;
 
 /**
- * Дессериализация duration в JSON
+ * Дессериализация duration в JSON.
  */
 
 public class DurationSerializer extends StdSerializer<Duration> {

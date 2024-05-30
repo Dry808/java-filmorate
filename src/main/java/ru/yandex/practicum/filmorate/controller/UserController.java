@@ -6,6 +6,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
+import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.UpdateGroup;
 
 import java.util.ArrayList;
@@ -28,11 +29,16 @@ public class UserController {
     public User addUser(@Validated(CreateGroup.class) @RequestBody User user) {
         log.info("Создаётся пользователь: {} ", user);
 
-        if (user.getName() == null) {  // Если имя пустое - нужно использовать логин
+        if (!ModelValidator.validateUser(user)) { // проверка
+            throw new ValidationException(ModelValidator.currentError);
+        }
+
+        if (user.getName() == null || user.getName().trim().isEmpty()) {  // Если имя пустое - нужно использовать логин
             user.setName(user.getLogin());
         }
         user.setId(getNextUserId()); // устанавливаем ID
         users.put(user.getId(), user);
+
         log.info("Пользователь успешно добавлен с идентификатором: {}", user.getId());
         return user;
     }
