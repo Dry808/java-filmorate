@@ -51,7 +51,7 @@ public class FilmController {
     public Film updateFilm(@Validated(UpdateGroup.class) @RequestBody Film newFilm) {
         log.info("Обновление фильма с ID: {}", newFilm.getId());
 
-        if (films.containsKey(newFilm.getId())) {
+        if (films.containsKey(newFilm.getId())) {  // Проверяем существует ли фильм с таким ID
             Film oldFilm = films.get(newFilm.getId());
             if (newFilm.getName() != null && (newFilm.getName().trim().length() > 0)) {
                 oldFilm.setName(newFilm.getName());
