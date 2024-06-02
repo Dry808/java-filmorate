@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.UpdateGroup;
+import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,14 +24,17 @@ import java.util.Map;
 @RequestMapping("/users")
 public class UserController {
     private Map<Integer, User> users = new HashMap<>();
+    private int userId = 0;
+
 
     // Добавить пользователя
     @PostMapping
     public User addUser(@Validated(CreateGroup.class) @RequestBody User user) {
         log.info("Создаётся пользователь: {} ", user);
 
-        if (!ModelValidator.validateUser(user)) { // проверка
-            throw new ValidationException(ModelValidator.currentError);
+        ValidationResult validationResult = ModelValidator.validateUser(user);
+        if (!validationResult.isValid()) { // проверка
+            throw new ValidationException(validationResult.getCurrentError());
         }
 
         if (user.getName() == null || user.getName().trim().isEmpty()) {  // Если имя пустое - нужно использовать логин
@@ -43,34 +47,33 @@ public class UserController {
         return user;
     }
 
-    // Обновить существуюшего пользователя
+    // Обновить существующего пользователя
     @PutMapping
     public User updateUser(@Validated(UpdateGroup.class) @RequestBody User user) {
         log.info("Обновляются данные пользователя c ID: {} ", user.getId());
 
-        if (users.containsKey(user.getId())) {   // проверяем, существует ли пользователь с таким ID
-            User oldUser = users.get(user.getId());
-            if (user.getEmail() != null && user.getEmail().contains("@")) {
-                oldUser.setEmail(user.getEmail());
-            }
-
-            if (user.getLogin() != null) {
-                oldUser.setLogin(user.getLogin());
-            }
-
-            if (user.getName() != null) {
-                oldUser.setName(user.getName());
-            }
-
-            if (user.getBirthday() != null) {
-                oldUser.setBirthday(user.getBirthday());
-            }
-
-            return oldUser;
-        } else {
+        if (!users.containsKey(user.getId())) { // Проверка наличия пользователя с таким ID
             log.error("Попытка обновить данные пользователя с несуществующим ID: {}", user.getId());
             throw new ValidationException("Пользователя с ID=" + user.getId() + " не существует");
         }
+        User oldUser = users.get(user.getId());
+        if (user.getEmail() != null && user.getEmail().contains("@")) {
+            oldUser.setEmail(user.getEmail());
+        }
+
+        if (user.getLogin() != null) {
+            oldUser.setLogin(user.getLogin());
+        }
+
+        if (user.getName() != null) {
+            oldUser.setName(user.getName());
+        }
+
+        if (user.getBirthday() != null) {
+            oldUser.setBirthday(user.getBirthday());
+        }
+        log.info("Пользователь с ID: {} успешно обновлен", user.getId());
+        return oldUser;
     }
 
     // Получить список всех пользователей
@@ -80,13 +83,8 @@ public class UserController {
     }
 
     // Метод для создания ID пользователя
-    private Integer getNextUserId() {
-        int currentMaxId = users.keySet()
-                .stream()
-                .mapToInt(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+    private int getNextUserId() {
+        return ++userId;
     }
 
 

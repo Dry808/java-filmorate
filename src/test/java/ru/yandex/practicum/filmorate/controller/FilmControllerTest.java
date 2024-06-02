@@ -34,6 +34,7 @@ class FilmControllerTest {
 
         filmController.addFilm(film);
 
+        assertEquals(1, film.getId());
         assertFalse(filmController.getAllFilms().isEmpty(), "Фильм не создан/не сохранён");
     }
 
