@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.validation.UpdateGroup;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * * Модель, описывающая фильм
@@ -29,4 +30,5 @@ public class Film {
     private LocalDate releaseDate;
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
+    private Set<Integer> likes;
 }
