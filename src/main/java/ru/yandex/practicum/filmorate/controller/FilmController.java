@@ -1,26 +1,16 @@
 package ru.yandex.practicum.filmorate.controller;
 
 
-import jakarta.validation.ValidationException;
-
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
-import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
-import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.UpdateGroup;
-import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 
 /**
@@ -38,7 +28,6 @@ public class FilmController {
         this.filmService = filmService;
     }
 
-    public FilmController() {}
 
 
 
@@ -63,10 +52,31 @@ public class FilmController {
     // Получить список всех фильмов
     @GetMapping
     public List<Film> getAllFilms() {
+        log.info("Получение списка всех фильмов");
         return filmService.getAllFilms();
     }
 
+    @GetMapping("/{id}")
+    public Film getFilmById(@PathVariable int id) {
+        log.info("Получение фильма с ID=" + id);
+        return filmService.getFilmById(id);
+    }
 
+    @PutMapping("/{id}/like/{userId}")
+    public void addLike(@PathVariable int id, @PathVariable int userId) {
+        filmService.addLike(id,userId);
+        log.info("Фильм с Id=" + id + " лайкнул пользователь с id=" + userId);
+    }
 
+    @DeleteMapping("/{id}/like/{userId}")
+    public void removeLike(@PathVariable int id, @PathVariable int userId) {
+        filmService.removeLike(id,userId);
+        log.info("Пользователь с id=" + userId + " убрал лайк с фильма с id=" + id);
+    }
 
+    @GetMapping("/popular")
+    public List<Film> getTopFilms(@RequestParam(defaultValue = "10") int count) {
+        log.info("Получение топ-" + count + " фильмов по лайкам");
+        return filmService.getTopFilms(count);
+    }
 }
