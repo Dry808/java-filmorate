@@ -3,9 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
@@ -38,7 +38,7 @@ public class FilmService {
         Film oldFilm = inMemoryFilmStorage.getFilmById(newFilm.getId());
         if (oldFilm == null) {
             log.error("Попытка обновить несуществующий фильм с ID: {}", newFilm.getId());
-            throw new ValidationException("Фильма с ID= " + newFilm.getId() + " не существует");
+            throw new NotFoundException("Фильма с ID= " + newFilm.getId() + " не существует");
         }
 
         if (newFilm.getName() != null && !newFilm.getName().trim().isEmpty()) {
@@ -69,7 +69,7 @@ public class FilmService {
 
     public Film getFilmById(int filmId) {
         if (inMemoryFilmStorage.getFilmById(filmId) == null) {
-            throw new ValidationException("Фильма с ID=" + filmId + " не существует");
+            throw new NotFoundException("Фильма с ID=" + filmId + " не существует");
         }
         return inMemoryFilmStorage.getFilmById(filmId);
     }
@@ -77,7 +77,7 @@ public class FilmService {
     // Добавление лайка фильму
     public void addLike(int filmId, int userId) {
         if (inMemoryFilmStorage.getFilmById(filmId) == null) {
-            throw new ValidationException("Фильма с ID=" + filmId + " не существует");
+            throw new NotFoundException("Фильма с ID=" + filmId + " не существует");
         }
 
         inMemoryFilmStorage.addLike(filmId, userId);
@@ -86,13 +86,12 @@ public class FilmService {
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
         if (inMemoryFilmStorage.getFilmById(filmId) == null) {
-            throw new ValidationException("Фильма с ID=" + filmId + " не существует");
+            throw new NotFoundException("Фильма с ID=" + filmId + " не существует");
         }
 
-        if(inMemoryFilmStorage.getFilmById(filmId).getLikes().contains(filmId)) {
-            throw new ValidationException("Пользователь с ID=" + userId + " не ставил лайк на фильм с ID=" + filmId);
+        if (inMemoryFilmStorage.getFilmById(filmId).getLikes().contains(filmId)) {
+            throw new NotFoundException("Пользователь с ID=" + userId + " не ставил лайк на фильм с ID=" + filmId);
         }
-
         inMemoryFilmStorage.removeLike(filmId,userId);
     }
 

@@ -29,8 +29,6 @@ public class FilmController {
     }
 
 
-
-
     // Добавляем фильм
     @PostMapping
     public Film addFilm(@Validated(CreateGroup.class) @RequestBody Film film) {
