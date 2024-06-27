@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
@@ -18,10 +19,12 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     private final FilmStorage inMemoryFilmStorage;
+    private final UserStorage inMemoryUserStorage;
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
 
-    public FilmService(FilmStorage inMemoryFilmStorage) {
+    public FilmService(FilmStorage inMemoryFilmStorage, UserStorage inMemoryUserStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
+        this.inMemoryUserStorage = inMemoryUserStorage;
     }
 
     // Добавление фильма
@@ -68,31 +71,23 @@ public class FilmService {
     }
 
     public Film getFilmById(int filmId) {
-        if (inMemoryFilmStorage.getFilmById(filmId) == null) {
-            throw new NotFoundException("Фильма с ID=" + filmId + " не существует");
-        }
         return inMemoryFilmStorage.getFilmById(filmId);
     }
 
     // Добавление лайка фильму
     public void addLike(int filmId, int userId) {
-        if (inMemoryFilmStorage.getFilmById(filmId) == null) {
-            throw new NotFoundException("Фильма с ID=" + filmId + " не существует");
-        }
-
-        inMemoryFilmStorage.addLike(filmId, userId);
+        inMemoryUserStorage.getUserById(userId);  // проверка наличия пользователя с таким ID
+        inMemoryFilmStorage.getFilmById(filmId).getLikes().add(userId);
     }
 
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
-        if (inMemoryFilmStorage.getFilmById(filmId) == null) {
-            throw new NotFoundException("Фильма с ID=" + filmId + " не существует");
-        }
-
-        if (inMemoryFilmStorage.getFilmById(filmId).getLikes().contains(filmId)) {
+        inMemoryUserStorage.getUserById(userId);
+        if (!inMemoryFilmStorage.getFilmById(filmId).getLikes().contains(userId)) {
             throw new NotFoundException("Пользователь с ID=" + userId + " не ставил лайк на фильм с ID=" + filmId);
         }
-        inMemoryFilmStorage.removeLike(filmId,userId);
+
+        inMemoryFilmStorage.getFilmById(filmId).getLikes().remove(userId);
     }
 
     // Получение топ-10 фильмов по лайкам

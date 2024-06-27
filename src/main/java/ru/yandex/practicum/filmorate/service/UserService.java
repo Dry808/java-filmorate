@@ -9,12 +9,10 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
-import java.util.ArrayList;
+
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
-import static java.util.Arrays.stream;
 
 @Slf4j
 @Component
@@ -69,55 +67,30 @@ public class UserService {
     }
 
     public User getUserById(int id) {
-        User user = inMemoryUserStorage.getUserById(id);
-        if (user == null) {
-            throw new NotFoundException("Пользователя с ID:" + id + " не существует");
-        }
-
-        return user;
+        return inMemoryUserStorage.getUserById(id);
     }
 
-    public int addFriend(int userId, int friendId) {
-        if (inMemoryUserStorage.getUserById(userId) == null) {
-            throw new NotFoundException("Пользователя с ID:" + userId + " не существует");
-        }
-
-        if (inMemoryUserStorage.getUserById(friendId) == null) {
-            throw new NotFoundException("Пользователя с ID:" + friendId + " не существует");
-        }
-
-        return inMemoryUserStorage.addFriend(userId, friendId);
+    public void addFriend(int userId, int friendId) {
+        inMemoryUserStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
+        inMemoryUserStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
     }
 
     public void removeFriend(int userId, int friendId) {
-        if (inMemoryUserStorage.getUserById(userId) == null) {
-            throw new NotFoundException("Пользователя с ID:" + userId + " не существует");
-        }
-
-        if (inMemoryUserStorage.getUserById(friendId) == null) {
-            throw new NotFoundException("Пользователя с ID:" + friendId + " не существует");
-        }
-        inMemoryUserStorage.removeFriend(userId, friendId);
+        inMemoryUserStorage.getUserById(userId).getFriends().remove(friendId);
+        inMemoryUserStorage.getUserById(friendId).getFriends().remove(userId);
     }
 
-    public List<String> getFriends(int id) {
-        return inMemoryUserStorage.getUserById(id).getFriends().stream()
+    public List<User> getFriends(int id) {
+        return getUserById(id).getFriends().stream()
                 .map(inMemoryUserStorage::getUserById)
-                .map(User::getName)
                 .collect(Collectors.toList());
     }
 
-    public List<String> getCommonFriends(int userId, int friendId) {
-        Set<Integer> user1 = inMemoryUserStorage.getUserById(userId).getFriends();
-        Set<Integer> user2 = inMemoryUserStorage.getUserById(friendId).getFriends();
-        List<String> commonFriends = new ArrayList<>(); // список общих друзей
-
-        for (Integer user : user1) {
-            if (user2.contains(user)) {
-                String friendName = inMemoryUserStorage.getUserById(user).getName();
-                commonFriends.add(friendName);
-            }
-        }
-        return commonFriends;
+    public List<User> getCommonFriends(int userId, int friendId) {
+        List<User> user1 = getFriends(userId);
+        List<User> user2 = getFriends(friendId);
+        return user1.stream()
+                .filter(user2::contains)
+                .collect(Collectors.toList());
     }
 }
