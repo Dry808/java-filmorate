@@ -18,9 +18,9 @@ import static org.junit.jupiter.api.Assertions.*;
 
 
 class FilmControllerTest {
-    FilmController filmController;
-
     static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+    private FilmController filmController;
+
 
     @BeforeEach
     public void beforeEach() {

@@ -18,9 +18,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Service
 public class FilmService {
+    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final FilmStorage inMemoryFilmStorage;
     private final UserStorage inMemoryUserStorage;
-    private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+
 
     public FilmService(FilmStorage inMemoryFilmStorage, UserStorage inMemoryUserStorage) {
         this.inMemoryFilmStorage = inMemoryFilmStorage;
