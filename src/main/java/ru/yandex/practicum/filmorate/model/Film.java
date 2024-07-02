@@ -1,6 +1,7 @@
 package ru.yandex.practicum.filmorate.model;
 
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import jakarta.validation.constraints.*;
 import lombok.Builder;
@@ -12,6 +13,8 @@ import ru.yandex.practicum.filmorate.validation.UpdateGroup;
 
 import java.time.Duration;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * * Модель, описывающая фильм
@@ -29,4 +32,12 @@ public class Film {
     private LocalDate releaseDate;
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
+    private final Set<Integer> likes = new HashSet<>();
+
+
+    // Метод для подсчёта кол-ва лайков на фильме
+    @JsonIgnore
+    public Integer getLikesCount() {
+        return likes.size();
+    }
 }

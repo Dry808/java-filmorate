@@ -6,7 +6,9 @@ import org.junit.jupiter.api.Test;
 
 
 import ru.yandex.practicum.filmorate.model.Film;
-
+import ru.yandex.practicum.filmorate.service.FilmService;
+import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
+import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 
 import java.time.Duration;
@@ -14,13 +16,15 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
 class FilmControllerTest {
-    FilmController filmController;
     static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
+    private FilmController filmController;
+
 
     @BeforeEach
     public void beforeEach() {
-        filmController = new FilmController();
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(),new InMemoryUserStorage()));
     }
 
     @Test

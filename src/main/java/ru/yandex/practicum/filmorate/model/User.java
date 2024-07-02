@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -9,6 +10,8 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * * Модель, описывающая пользователей приложения
@@ -26,5 +29,11 @@ public class User {
     private String name;
     @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
+    private final Set<Integer> friends = new HashSet<>();
+
+    @JsonIgnore
+    public int getFriendsCount() {
+        return friends.size();
+    }
 
 }
