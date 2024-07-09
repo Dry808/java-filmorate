@@ -17,10 +17,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class UserService {
-    private final UserStorage inMemoryUserStorage;
+    private final UserStorage userStorage;
 
-    public UserService(UserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     public User addUser(User user) {
@@ -33,11 +33,11 @@ public class UserService {
             user.setName(user.getLogin());
         }
 
-        return inMemoryUserStorage.addUser(user);
+        return userStorage.addUser(user);
     }
 
     public User updateUser(User user) {
-        User oldUser = inMemoryUserStorage.getUserById(user.getId());
+        User oldUser = userStorage.getUserById(user.getId());
         if (oldUser == null) { // Проверка наличия пользователя с таким ID
             log.error("Попытка обновить данные пользователя с несуществующим ID: {}", user.getId());
             throw new NotFoundException("Пользователя с ID=" + user.getId() + " не существует");
@@ -59,30 +59,30 @@ public class UserService {
             oldUser.setBirthday(user.getBirthday());
         }
 
-        return inMemoryUserStorage.updateUser(oldUser);
+        return userStorage.updateUser(oldUser);
     }
 
     public List<User> getAllUsers() {
-        return inMemoryUserStorage.getAllUsers();
+        return userStorage.getAllUsers();
     }
 
     public User getUserById(int id) {
-        return inMemoryUserStorage.getUserById(id);
+        return userStorage.getUserById(id);
     }
 
     public void addFriend(int userId, int friendId) {
-        inMemoryUserStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
-        inMemoryUserStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
+        userStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
+        userStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
     }
 
     public void removeFriend(int userId, int friendId) {
-        inMemoryUserStorage.getUserById(userId).getFriends().remove(friendId);
-        inMemoryUserStorage.getUserById(friendId).getFriends().remove(userId);
+        userStorage.getUserById(userId).getFriends().remove(friendId);
+        userStorage.getUserById(friendId).getFriends().remove(userId);
     }
 
     public List<User> getFriends(int id) {
         return getUserById(id).getFriends().stream()
-                .map(inMemoryUserStorage::getUserById)
+                .map(userStorage::getUserById)
                 .collect(Collectors.toList());
     }
 

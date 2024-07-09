@@ -41,7 +41,8 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
                 user.getEmail(),
                 user.getLogin(),
                 user.getName(),
-                user.getBirthday()
+                user.getBirthday(),
+                user.getId()
         );
         return user;
     }
