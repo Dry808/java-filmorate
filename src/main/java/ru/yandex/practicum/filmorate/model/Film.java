@@ -33,6 +33,8 @@ public class Film {
     @JsonSerialize(using = DurationSerializer.class)
     private Duration duration;
     private final Set<Integer> likes = new HashSet<>();
+    private final Set<String> genre = new HashSet<>();
+    private Mpa rating;
 
 
     // Метод для подсчёта кол-ва лайков на фильме

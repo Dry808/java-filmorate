@@ -1,6 +1,5 @@
-package ru.yandex.practicum.filmorate.model;
+package ru.yandex.practicum.filmorate.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Past;
@@ -9,36 +8,25 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import ru.yandex.practicum.filmorate.validation.CreateGroup;
 
 import java.time.LocalDate;
-import java.util.HashSet;
-import java.util.Set;
-
-/**
- * * Модель, описывающая пользователей приложения
- */
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class UserDto {
     private int id;
-    @Email(message = "Неправильный формат email", groups = CreateGroup.class)
+
+    @Email(message = "Неправильный формат email")
     private String email;
-    @NotBlank(message = "Логин не может быть пустым", groups = CreateGroup.class)
+
+    @NotBlank(message = "Логин не может быть пустым")
     @Pattern(regexp = "^\\S+$", message = "Логин не может содержать пробелы")
     private String login;
+
     private String name;
+
     @Past(message = "Дата рождения не может быть в будущем")
     private LocalDate birthday;
-    private final Set<Integer> friends = new HashSet<>();
-
-
-    @JsonIgnore
-    public int getFriendsCount() {
-        return friends.size();
-    }
-
 }
