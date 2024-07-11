@@ -107,18 +107,19 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         Film film =  optionalFilm.orElseThrow(() -> new NotFoundException("Фильм с ID=" + id + " не найден"));
         film.setGenres(genreService.getGenresFromFilm(film.getId()));
         film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
+        film.setLikes(getLikes(film.getId()));
         return film;
     }
 
-
+    @Override
     public void addLike(int filmId, int userId) {
         insertTwo(INSERT_QUERY_LIKE, filmId, userId);
     }
 
+    @Override
     public void removeLike(int filmId, int userId) {
         delete(DELETE_QUERY_LIKE, filmId, userId);
     }
-
 
 
     private Set<Integer> getLikes(int filmId) {

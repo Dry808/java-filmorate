@@ -70,20 +70,42 @@ public class UserService {
         return userStorage.getUserById(id);
     }
 
+
     public void addFriend(int userId, int friendId) {
-        userStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
-        userStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
+//        userStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
+//        userStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
+        //userStorage.addFriend(userId, friendId, "unconfirmed");
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        String status = "unconfirmed";
+        if (friend.getFriends().contains(userId)) {
+            status = "confirmed";
+            userStorage.updateFriendStatus(friendId, userId, status);
+
+        }
+        userStorage.addFriend(userId, friendId, status);
     }
 
     public void removeFriend(int userId, int friendId) {
-        userStorage.getUserById(userId).getFriends().remove(friendId);
-        userStorage.getUserById(friendId).getFriends().remove(userId);
+//        userStorage.getUserById(userId).getFriends().remove(friendId);
+//        userStorage.getUserById(friendId).getFriends().remove(userId);
+        //userStorage.removeFriend(userId, friendId);
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        userStorage.removeFriend(userId, friendId);
+        if (friend.getFriends().contains(userId)) {
+            userStorage.updateFriendStatus(friendId, userId, "unconfirmed" );
+        }
     }
 
-    public List<User> getFriends(int id) {
-        return getUserById(id).getFriends().stream()
-                .map(userStorage::getUserById)
-                .collect(Collectors.toList());
+    public List<User> getFriends(int userId) {
+//        List<User> friends = getUserById(userId).getFriends().stream()
+//                .map(userStorage::getUserById)
+//                .collect(Collectors.toList());
+//
+//
+        getUserById(userId);
+       return userStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(int userId, int friendId) {
