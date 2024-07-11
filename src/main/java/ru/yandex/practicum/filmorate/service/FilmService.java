@@ -19,13 +19,13 @@ import java.util.stream.Collectors;
 @Service
 public class FilmService {
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
-    private final FilmStorage inMemoryFilmStorage;
-    private final UserStorage inMemoryUserStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
 
-    public FilmService(FilmStorage inMemoryFilmStorage, UserStorage inMemoryUserStorage) {
-        this.inMemoryFilmStorage = inMemoryFilmStorage;
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     // Добавление фильма
@@ -34,12 +34,12 @@ public class FilmService {
         if (!validationResult.isValid()) { // проверка
             throw new ValidationException(validationResult.getCurrentError());
         }
-        return inMemoryFilmStorage.addFilm(film);
+        return filmStorage.addFilm(film);
     }
 
     // Обновление(редактирование) фильма
     public Film updateFilm(Film newFilm) {
-        Film oldFilm = inMemoryFilmStorage.getFilmById(newFilm.getId());
+        Film oldFilm = filmStorage.getFilmById(newFilm.getId());
         if (oldFilm == null) {
             log.error("Попытка обновить несуществующий фильм с ID: {}", newFilm.getId());
             throw new NotFoundException("Фильма с ID= " + newFilm.getId() + " не существует");
@@ -61,39 +61,33 @@ public class FilmService {
             oldFilm.setDuration(newFilm.getDuration());
         }
 
-        inMemoryFilmStorage.updateFilm(oldFilm);
+        filmStorage.updateFilm(oldFilm);
 
         return oldFilm;
     }
 
     // Получение всех фильмов
     public List<Film> getAllFilms() {
-        return inMemoryFilmStorage.getAllFilms();
+        return filmStorage.getAllFilms();
     }
 
     public Film getFilmById(int filmId) {
-        return inMemoryFilmStorage.getFilmById(filmId);
+        return filmStorage.getFilmById(filmId);
     }
 
     // Добавление лайка фильму
     public void addLike(int filmId, int userId) {
-        inMemoryUserStorage.getUserById(userId);  // проверка наличия пользователя с таким ID
-        inMemoryFilmStorage.getFilmById(filmId).getLikes().add(userId);
+        filmStorage.addLike(filmId, userId);
     }
 
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
-        inMemoryUserStorage.getUserById(userId);
-        if (!inMemoryFilmStorage.getFilmById(filmId).getLikes().contains(userId)) {
-            throw new NotFoundException("Пользователь с ID=" + userId + " не ставил лайк на фильм с ID=" + filmId);
-        }
-
-        inMemoryFilmStorage.getFilmById(filmId).getLikes().remove(userId);
+        filmStorage.removeLike(filmId,userId);
     }
 
     // Получение топ-10 фильмов по лайкам
     public List<Film> getTopFilms(int count) {
-        return inMemoryFilmStorage.getAllFilms().stream()
+        return filmStorage.getAllFilms().stream()
                 .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
                 .limit(count)
                 .collect(Collectors.toList());

@@ -28,5 +28,7 @@ public class ErrorHandler {
     ErrorResponse validationException(final ValidationException e) {
         return new ErrorResponse(e.getMessage());
     }
+
+
 }
 

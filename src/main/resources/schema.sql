@@ -1,18 +1,23 @@
+CREATE TABLE IF NOT EXISTS films_rating (
+  id INT PRIMARY KEY,
+  name VARCHAR(20)
+);
+
 CREATE TABLE IF NOT EXISTS films (
-  id INT AUTO_INCREMENT PRIMARY KEY ,
+  id INT AUTO_INCREMENT PRIMARY KEY,
   name VARCHAR(200) NOT NULL,
   description VARCHAR(200),
   release_date DATE,
   duration INT,
-  genre_id INT,
-  rating_id INT
+  rating_id INT,
+  FOREIGN KEY (rating_id) REFERENCES films_rating(id)
 );
 
 CREATE TABLE IF NOT EXISTS users (
   id INT AUTO_INCREMENT PRIMARY KEY,
   email VARCHAR(64),
-  login VARCHAR(20) NOT NULL,
-  name VARCHAR(20),
+  login VARCHAR(200) NOT NULL,
+  name VARCHAR(200),
   birthday DATE
 );
 
@@ -46,7 +51,3 @@ CREATE TABLE IF NOT EXISTS film_genres (
   FOREIGN KEY (genre_id) REFERENCES genre(id)
 );
 
-CREATE TABLE IF NOT EXISTS films_rating (
-  id INT PRIMARY KEY,
-  rating_mpa_name VARCHAR(10)
-);

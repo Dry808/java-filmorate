@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RequiredArgsConstructor
@@ -42,7 +43,7 @@ public class BaseRepository<T> {
 
         Integer id = keyHolder.getKeyAs(Integer.class);
 
-        // Возвращаем id нового пользователя
+        // Возвращаем id
         if (id != null) {
             return id;
         } else {
@@ -50,8 +51,8 @@ public class BaseRepository<T> {
         }
     }
 
-    protected boolean delete(String query, long id) {
-        int rowsDeleted = jdbc.update(query, id);
+    protected boolean delete(String query, Object... params) {
+        int rowsDeleted = jdbc.update(query, params);
         return rowsDeleted > 0;
     }
 
@@ -60,5 +61,21 @@ public class BaseRepository<T> {
         if (rowsUpdated == 0) {
             throw new InternalServerException("Не удалось обновить данные");
         }
+    }
+
+    protected void insertTwo(String query, Object... params) {
+        GeneratedKeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbc.update(connection -> {
+            PreparedStatement ps = connection
+                    .prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
+            for (int idx = 0; idx < params.length; idx++) {
+                ps.setObject(idx + 1, params[idx]);
+            }
+            return ps;
+        }, keyHolder);
+
+        List<Map<String, Object>> keyList = keyHolder.getKeyList();
+
+
     }
 }
