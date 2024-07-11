@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
@@ -20,12 +19,10 @@ import java.util.stream.Collectors;
 public class FilmService {
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
 
 
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
+    public FilmService(FilmStorage filmStorage) {
         this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
     }
 
     // Добавление фильма
@@ -85,7 +82,7 @@ public class FilmService {
         filmStorage.removeLike(filmId,userId);
     }
 
-    // Получение топ-10 фильмов по лайкам
+    // Получение топ-фильмов по лайкам
     public List<Film> getTopFilms(int count) {
         return filmStorage.getAllFilms().stream()
                 .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())

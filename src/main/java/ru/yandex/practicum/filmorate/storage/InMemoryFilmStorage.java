@@ -42,12 +42,13 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     @Deprecated
-    public void addLike(int filmId, int userId) {}
+    public void addLike(int filmId, int userId) {
+    }
 
     @Override
     @Deprecated
-    public void removeLike(int filmId, int userId) {}
-
+    public void removeLike(int filmId, int userId) {
+    }
 
     // метод для генерации ID фильма
     private int getNextFilmId() {

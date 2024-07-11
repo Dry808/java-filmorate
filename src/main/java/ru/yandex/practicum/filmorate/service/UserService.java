@@ -28,7 +28,6 @@ public class UserService {
         if (!validationResult.isValid()) { // проверка
             throw new ValidationException(validationResult.getCurrentError());
         }
-
         if (user.getName() == null || user.getName().trim().isEmpty()) {  // Если имя пустое - нужно использовать логин
             user.setName(user.getLogin());
         }
@@ -70,11 +69,7 @@ public class UserService {
         return userStorage.getUserById(id);
     }
 
-
     public void addFriend(int userId, int friendId) {
-//        userStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
-//        userStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
-        //userStorage.addFriend(userId, friendId, "unconfirmed");
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
         String status = "unconfirmed";
@@ -87,25 +82,17 @@ public class UserService {
     }
 
     public void removeFriend(int userId, int friendId) {
-//        userStorage.getUserById(userId).getFriends().remove(friendId);
-//        userStorage.getUserById(friendId).getFriends().remove(userId);
-        //userStorage.removeFriend(userId, friendId);
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
         userStorage.removeFriend(userId, friendId);
         if (friend.getFriends().contains(userId)) {
-            userStorage.updateFriendStatus(friendId, userId, "unconfirmed" );
+            userStorage.updateFriendStatus(friendId, userId, "unconfirmed");
         }
     }
 
     public List<User> getFriends(int userId) {
-//        List<User> friends = getUserById(userId).getFriends().stream()
-//                .map(userStorage::getUserById)
-//                .collect(Collectors.toList());
-//
-//
-        getUserById(userId);
-       return userStorage.getFriends(userId);
+        getUserById(userId); // для проверки существования пользователя с таким ID
+        return userStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(int userId, int friendId) {

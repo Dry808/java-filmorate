@@ -6,12 +6,14 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.List;
 import java.util.Optional;
+/**
+ * Класс для взаимодействия Рейтингов(Mpa) с БД
+ */
 
 @Slf4j
 @Repository
@@ -26,7 +28,7 @@ public class MpaDbStorage extends BaseRepository<Mpa> implements MpaStorage {
 
     @Override
     public Mpa getMpaById(int id) {
-        Optional<Mpa> mpaOptional= findOne(FIND_BY_ID_QUERY, id);
+        Optional<Mpa> mpaOptional = findOne(FIND_BY_ID_QUERY, id);
         return mpaOptional.orElseThrow(() -> new NotFoundException("Рейтинг(MPA) с ID=" + id + " не найден"));
     }
 

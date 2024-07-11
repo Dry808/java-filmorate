@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.dal;
 
-import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -12,6 +11,10 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 
 import java.util.*;
 import java.util.stream.Collectors;
+
+/**
+ * Класс для взаимодействия объектов User с БД
+ */
 
 @Slf4j
 @Repository
@@ -35,6 +38,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         super(jdbc, mapper);
     }
 
+    // Добавление пользователя в БД
     @Override
     public User addUser(User user) {
         int id = insert(INSERT_QUERY, user.getEmail(), user.getLogin(), user.getName(), user.getBirthday());
@@ -43,6 +47,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         return user;
     }
 
+    // Обновление пользователя в БД
     @Override
     public User updateUser(User user) {
         update(UPDATE_QUERY,
@@ -55,39 +60,45 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         return user;
     }
 
+    // Получение всех пользователей из БД
     @Override
     public List<User> getAllUsers() {
         return findMany(FIND_ALL_QUERY);
     }
 
+    // Получение пользователя из БД по ID
     @Override
     public User getUserById(int id) {
         Optional<User> userOptional = findOne(FIND_BY_ID_QUERY, id);
         return userOptional.orElseThrow(() -> new NotFoundException("Пользователь с ID=" + id + " не найден"));
     }
 
+    // Добавление в друзья(внесение данных по дружбе в БД)
     @Override
     public void addFriend(int userId, int friendId, String status) {
-        insertTwo(INSERT_FRIEND_QUERY, userId, friendId, status);
+        insertTwoKeys(INSERT_FRIEND_QUERY, userId, friendId, status);
     }
 
+    // Удаление дружбы из БД
     @Override
     public void removeFriend(int userId, int friendId) {
         delete(DELETE_FRIEND_QUERY, userId, friendId);
     }
 
-
+    // Обновления статуса дружбы в БД
+    @Override
     public void updateFriendStatus(int userId, int friendId, String status) {
         update(UPDATE_FRIEND_STATUS, status, userId, friendId);
     }
 
+    // Получение списка друзей по ID из БД
+    @Override
     public List<User> getFriends(int userId) {
-        List<User> userFriends = findMany(FIND_USER_FRIENDS, userId);
-        return userFriends;
+        return findMany(FIND_USER_FRIENDS, userId);
     }
 
-
-    public Set<Integer> getUserFriendsId(int userId) {
+    // Получение списка ID друзей
+    private Set<Integer> getUserFriendsId(int userId) {
         List<User> userFriends = findMany(FIND_USER_FRIENDS_ID, userId);
         return userFriends.stream()
                 .map(User::getId)

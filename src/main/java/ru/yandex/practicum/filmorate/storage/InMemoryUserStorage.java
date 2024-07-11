@@ -38,15 +38,19 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     @Deprecated
-    public void addFriend(int userId, int FriendId, String status) {}
+    public void addFriend(int userId, int friendId, String status) {
+    }
 
     @Override
     @Deprecated
-    public void removeFriend(int userId, int friendId){}
+    public void removeFriend(int userId, int friendId) {
+
+    }
 
     @Override
     @Deprecated
-    public void updateFriendStatus(int userId, int friendId, String status) {}
+    public void updateFriendStatus(int userId, int friendId, String status) {
+    }
 
     @Override
     @Deprecated
