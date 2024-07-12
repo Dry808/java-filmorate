@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class UserService {
+    private static final String STATUS_UNCONFIRMED = "unconfirmed";
+    private static final String STATUS_CONFIRMED = "confirmed";
     private final UserStorage userStorage;
 
     public UserService(UserStorage userStorage) {
@@ -72,9 +74,9 @@ public class UserService {
     public void addFriend(int userId, int friendId) {
         User user = userStorage.getUserById(userId);
         User friend = userStorage.getUserById(friendId);
-        String status = "unconfirmed";
+        String status = STATUS_UNCONFIRMED;
         if (friend.getFriends().contains(userId)) {
-            status = "confirmed";
+            status = STATUS_CONFIRMED;
             userStorage.updateFriendStatus(friendId, userId, status);
 
         }
@@ -86,7 +88,7 @@ public class UserService {
         User friend = userStorage.getUserById(friendId);
         userStorage.removeFriend(userId, friendId);
         if (friend.getFriends().contains(userId)) {
-            userStorage.updateFriendStatus(friendId, userId, "unconfirmed");
+            userStorage.updateFriendStatus(friendId, userId, STATUS_UNCONFIRMED);
         }
     }
 

@@ -16,7 +16,6 @@ import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import java.util.*;
 
 
-
 @Slf4j
 @Repository
 @Primary
@@ -102,7 +101,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public Film getFilmById(int id) {
         Optional<Film> optionalFilm = findOne(FIND_BY_ID_QUERY, id);
-        Film film =  optionalFilm.orElseThrow(() -> new NotFoundException("Фильм с ID=" + id + " не найден"));
+        Film film = optionalFilm.orElseThrow(() -> new NotFoundException("Фильм с ID=" + id + " не найден"));
         film.setGenres(genreService.getGenresFromFilm(film.getId()));
         film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
         film.setLikes(getLikes(film.getId()));
@@ -123,7 +122,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
 
     // Получение лайков фильма
     private Set<Integer> getLikes(int filmId) {
-        List<Integer> likes = jdbc.query(FIND_USER_ID_FROM_LIKES,(rs, rowNum) -> rs.getInt("user_id"), filmId);
+        List<Integer> likes = jdbc.query(FIND_USER_ID_FROM_LIKES, (rs, rowNum) -> rs.getInt("user_id"), filmId);
         return new HashSet<>(likes);
     }
 

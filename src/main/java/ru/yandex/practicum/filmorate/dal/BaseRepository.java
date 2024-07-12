@@ -10,7 +10,6 @@ import ru.yandex.practicum.filmorate.exception.InternalServerException;
 import java.sql.PreparedStatement;
 import java.sql.Statement;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -44,7 +43,8 @@ public class BaseRepository<T> {
             for (int idx = 0; idx < params.length; idx++) {
                 ps.setObject(idx + 1, params[idx]);
             }
-            return ps; }, keyHolder);
+            return ps;
+        }, keyHolder);
 
         Integer id = keyHolder.getKeyAs(Integer.class);
 
@@ -80,6 +80,5 @@ public class BaseRepository<T> {
             }
             return ps;
         }, keyHolder);
-        List<Map<String, Object>> keyList = keyHolder.getKeyList();
     }
 }
