@@ -70,10 +70,10 @@ public class UserController {
     }
 
     // Получить список друзей
-    @GetMapping("/{id}/friends")
-    public List<User> getFriends(@PathVariable int id) {
-        log.info("Получение списка друзей пользователя ID=" + id);
-        return userService.getFriends(id);
+    @GetMapping("/{userId}/friends")
+    public List<User> getFriends(@PathVariable int userId) {
+        log.info("Получение списка друзей пользователя ID=" + userId);
+        return userService.getFriends(userId);
     }
 
     // Получить список общих друзей

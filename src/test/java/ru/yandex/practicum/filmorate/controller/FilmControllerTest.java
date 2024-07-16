@@ -8,10 +8,8 @@ import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.FilmService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
-import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
 
 
-import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -24,7 +22,7 @@ class FilmControllerTest {
 
     @BeforeEach
     public void beforeEach() {
-        filmController = new FilmController(new FilmService(new InMemoryFilmStorage(),new InMemoryUserStorage()));
+        filmController = new FilmController(new FilmService(new InMemoryFilmStorage()));
     }
 
     @Test
@@ -33,7 +31,7 @@ class FilmControllerTest {
                 .name("Назад в будущее")
                 .description("Фильм о путешествии во времени")
                 .releaseDate(LocalDate.of(1995, 12, 18))
-                .duration(Duration.ofMinutes(90))
+                .duration(90)
                 .build();
 
         filmController.addFilm(film);
@@ -48,7 +46,7 @@ class FilmControllerTest {
                 .name(" ")
                 .description("Фильм о путешествии во времени")
                 .releaseDate(LocalDate.of(1995, 12, 18))
-                .duration(Duration.ofMinutes(90))
+                .duration(90)
                 .build();
 
         assertThrows(ValidationException.class, () -> filmController.addFilm(film));
@@ -63,7 +61,7 @@ class FilmControllerTest {
                         "Он сталкивается с врагами, которые пытаются уничтожить его, и встречает новых союзников, " +
                         "которые помогают ему преодолевать трудности.")
                 .releaseDate(LocalDate.of(1995, 12, 18))
-                .duration(Duration.ofMinutes(90))
+                .duration(90)
                 .build();
 
         assertTrue(film.getDescription().length() > 200);
@@ -76,7 +74,7 @@ class FilmControllerTest {
                 .name("Человек-паук")
                 .description("Супергерой спасает мир")
                 .releaseDate(LocalDate.of(1895, 12, 27))
-                .duration(Duration.ofMinutes(120))
+                .duration(90)
                 .build();
 
         assertTrue(film.getReleaseDate().isBefore(CINEMA_BIRTHDAY));
@@ -89,10 +87,10 @@ class FilmControllerTest {
                 .name("Человек-паук")
                 .description("Супергерой спасает мир")
                 .releaseDate(LocalDate.of(1995, 12, 29))
-                .duration(Duration.ofMinutes(-120))
+                .duration(-90)
                 .build();
 
-        assertTrue(film.getDuration().isNegative());
+        assertFalse(film.getDuration() > 0);
         assertThrows(ValidationException.class, () -> filmController.addFilm(film));
     }
 }

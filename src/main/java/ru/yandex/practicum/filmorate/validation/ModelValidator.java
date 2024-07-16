@@ -39,7 +39,7 @@ public class ModelValidator {
         }
 
         // проверка, что продолжительность не может быть отрицательной
-        if (film.getDuration().isNegative()) {
+        if (film.getDuration() < 0) {
             String currentError = "Продолжительность фильма не может быть отрицательной";
             log.error(currentError);
             return new ValidationResult(false, currentError);

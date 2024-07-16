@@ -17,10 +17,12 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class UserService {
-    private final UserStorage inMemoryUserStorage;
+    private static final String STATUS_UNCONFIRMED = "unconfirmed";
+    private static final String STATUS_CONFIRMED = "confirmed";
+    private final UserStorage userStorage;
 
-    public UserService(UserStorage inMemoryUserStorage) {
-        this.inMemoryUserStorage = inMemoryUserStorage;
+    public UserService(UserStorage userStorage) {
+        this.userStorage = userStorage;
     }
 
     public User addUser(User user) {
@@ -28,16 +30,15 @@ public class UserService {
         if (!validationResult.isValid()) { // проверка
             throw new ValidationException(validationResult.getCurrentError());
         }
-
         if (user.getName() == null || user.getName().trim().isEmpty()) {  // Если имя пустое - нужно использовать логин
             user.setName(user.getLogin());
         }
 
-        return inMemoryUserStorage.addUser(user);
+        return userStorage.addUser(user);
     }
 
     public User updateUser(User user) {
-        User oldUser = inMemoryUserStorage.getUserById(user.getId());
+        User oldUser = userStorage.getUserById(user.getId());
         if (oldUser == null) { // Проверка наличия пользователя с таким ID
             log.error("Попытка обновить данные пользователя с несуществующим ID: {}", user.getId());
             throw new NotFoundException("Пользователя с ID=" + user.getId() + " не существует");
@@ -59,31 +60,41 @@ public class UserService {
             oldUser.setBirthday(user.getBirthday());
         }
 
-        return inMemoryUserStorage.updateUser(oldUser);
+        return userStorage.updateUser(oldUser);
     }
 
     public List<User> getAllUsers() {
-        return inMemoryUserStorage.getAllUsers();
+        return userStorage.getAllUsers();
     }
 
     public User getUserById(int id) {
-        return inMemoryUserStorage.getUserById(id);
+        return userStorage.getUserById(id);
     }
 
     public void addFriend(int userId, int friendId) {
-        inMemoryUserStorage.getUserById(userId).getFriends().add(friendId); // добавляем friendId в друзья userId
-        inMemoryUserStorage.getUserById(friendId).getFriends().add(userId); // добавляем userId, в друзья friendId
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        String status = STATUS_UNCONFIRMED;
+        if (friend.getFriends().contains(userId)) {
+            status = STATUS_CONFIRMED;
+            userStorage.updateFriendStatus(friendId, userId, status);
+
+        }
+        userStorage.addFriend(userId, friendId, status);
     }
 
     public void removeFriend(int userId, int friendId) {
-        inMemoryUserStorage.getUserById(userId).getFriends().remove(friendId);
-        inMemoryUserStorage.getUserById(friendId).getFriends().remove(userId);
+        User user = userStorage.getUserById(userId);
+        User friend = userStorage.getUserById(friendId);
+        userStorage.removeFriend(userId, friendId);
+        if (friend.getFriends().contains(userId)) {
+            userStorage.updateFriendStatus(friendId, userId, STATUS_UNCONFIRMED);
+        }
     }
 
-    public List<User> getFriends(int id) {
-        return getUserById(id).getFriends().stream()
-                .map(inMemoryUserStorage::getUserById)
-                .collect(Collectors.toList());
+    public List<User> getFriends(int userId) {
+        getUserById(userId); // для проверки существования пользователя с таким ID
+        return userStorage.getFriends(userId);
     }
 
     public List<User> getCommonFriends(int userId, int friendId) {

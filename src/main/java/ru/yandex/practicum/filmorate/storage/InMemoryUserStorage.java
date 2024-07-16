@@ -36,6 +36,28 @@ public class InMemoryUserStorage implements UserStorage {
         return users.get(id);
     }
 
+    @Override
+    @Deprecated
+    public void addFriend(int userId, int friendId, String status) {
+    }
+
+    @Override
+    @Deprecated
+    public void removeFriend(int userId, int friendId) {
+
+    }
+
+    @Override
+    @Deprecated
+    public void updateFriendStatus(int userId, int friendId, String status) {
+    }
+
+    @Override
+    @Deprecated
+    public List<User> getFriends(int userId) {
+        return List.of();
+    }
+
 
     // Метод для создания ID пользователя
     private int getNextUserId() {
