@@ -90,4 +90,13 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
+    // Получение общих фильмов
+    public List<Film> getCommonFilms(int userId, int filmId) {
+        List<Integer> commonFilmsId = filmStorage.getCommonFilms(userId, filmId);
+        return commonFilmsId.stream()
+                .map(this::getFilmById) // инициализация всех полей film
+                .collect(Collectors.toList());
+
+    }
+
 }

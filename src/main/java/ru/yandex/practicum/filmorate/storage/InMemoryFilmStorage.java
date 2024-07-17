@@ -50,6 +50,12 @@ public class InMemoryFilmStorage implements FilmStorage {
     public void removeLike(int filmId, int userId) {
     }
 
+    @Override
+    @Deprecated
+    public List<Integer> getCommonFilms(int userId, int friendId) {
+        return List.of();
+    }
+
     // метод для генерации ID фильма
     private int getNextFilmId() {
         return ++filmId;
