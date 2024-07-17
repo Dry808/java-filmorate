@@ -13,7 +13,10 @@ import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Slf4j
@@ -31,6 +34,9 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String FIND_USER_ID_FROM_LIKES = "SELECT user_id FROM films_like WHERE film_id = ?";
     private static final String INSERT_QUERY_LIKE = "INSERT INTO films_like(film_id, user_id) VALUES (?, ?)";
     private static final String DELETE_QUERY_LIKE = "DELETE FROM films_like WHERE film_id = ? AND user_id = ?";
+    private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE id = ?";
+    private static final String DELETE_ALL_LIKES_QUERY = "DELETE FROM films_like WHERE film_id = ?";
+
 
     private MpaService mpaService;
     private GenreService genreService;
@@ -118,6 +124,16 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public void removeLike(int filmId, int userId) {
         delete(DELETE_QUERY_LIKE, filmId, userId);
+    }
+
+    @Override
+    public Film deleteFilmById(int filmId) {
+        Film film = getFilmById(filmId);
+        delete(DELETE_ALL_LIKES_QUERY, filmId);
+        delete(DELETE_QUERY_GENRE, filmId);
+
+        delete(DELETE_FILM_QUERY, filmId);
+        return film;
     }
 
     // Получение лайков фильма

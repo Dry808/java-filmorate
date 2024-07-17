@@ -62,13 +62,13 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.addLike(id,userId);
+        filmService.addLike(id, userId);
         log.info("Фильм с Id=" + id + " лайкнул пользователь с id=" + userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.removeLike(id,userId);
+        filmService.removeLike(id, userId);
         log.info("Пользователь с id=" + userId + " убрал лайк с фильма с id=" + id);
     }
 
@@ -76,5 +76,12 @@ public class FilmController {
     public List<Film> getTopFilms(@RequestParam(defaultValue = "10") int count) {
         log.info("Получение топ-" + count + " фильмов по лайкам");
         return filmService.getTopFilms(count);
+    }
+
+    //Удаление фильма по id
+    @DeleteMapping("/{filmId}")
+    public Film deleteFilm(@PathVariable int filmId) {
+        log.info("Фильм удален id=" + filmId);
+        return filmService.deleteFilmById(filmId);
     }
 }

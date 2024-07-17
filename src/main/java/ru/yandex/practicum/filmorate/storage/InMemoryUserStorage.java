@@ -4,7 +4,10 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class InMemoryUserStorage implements UserStorage {
@@ -56,6 +59,12 @@ public class InMemoryUserStorage implements UserStorage {
     @Deprecated
     public List<User> getFriends(int userId) {
         return List.of();
+    }
+
+    @Override
+    @Deprecated
+    public User deleteUserById(int Userid) {
+        return new User();
     }
 
 
