@@ -63,7 +63,7 @@ public class InMemoryUserStorage implements UserStorage {
 
     @Override
     @Deprecated
-    public User deleteUserById(int Userid) {
+    public User deleteUserById(int userid) {
         return new User();
     }
 
