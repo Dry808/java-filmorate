@@ -1,9 +1,14 @@
 package ru.yandex.practicum.filmorate.service;
 
+import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.model.Review;
+import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
+import ru.yandex.practicum.filmorate.storage.UserStorage;
+import ru.yandex.practicum.filmorate.validation.ModelValidator;
+import ru.yandex.practicum.filmorate.validation.ValidationResult;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -11,18 +16,32 @@ import java.util.stream.Collectors;
 @Service
 public class ReviewService {
     private final ReviewStorage reviewStorage;
+    private final FilmStorage filmStorage;
+    private final UserStorage userStorage;
 
-    public ReviewService (ReviewStorage reviewStorage) {
+    public ReviewService (ReviewStorage reviewStorage, FilmStorage filmStorage, UserStorage userStorage) {
         this.reviewStorage = reviewStorage;
+        this.filmStorage = filmStorage;
+        this.userStorage = userStorage;
     }
 
     // Добавление отзыва
     public Review addReview(Review review) {
+        ValidationResult validationResult = ModelValidator.validateReview(review);
+        if (!validationResult.isValid()) { // проверка
+            throw new ValidationException(validationResult.getCurrentError());
+        }
+        filmStorage.getFilmById(review.getFilmId());
+        userStorage.getUserById(review.getUserId());
         return reviewStorage.addReview(review);
     }
 
     // Обновление отзыва
     public Review updateReview(Review newReview) {
+        ValidationResult validationResult = ModelValidator.validateReview(newReview);
+        if (!validationResult.isValid()) { // проверка
+            throw new ValidationException(validationResult.getCurrentError());
+        }
         return reviewStorage.updateReview(newReview);
     }
 

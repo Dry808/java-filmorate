@@ -43,7 +43,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
                     review.getFilmId(),
                     review.getUserId(),
                     review.getContent(),
-                    review.isPositive());
+                    review.getIsPositive());
             review.setReviewId(id);
             return review;
         } catch (RuntimeException e) {
@@ -59,7 +59,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
                     newReview.getFilmId(),
                     newReview.getUserId(),
                     newReview.getContent(),
-                    newReview.isPositive(),
+                    newReview.getIsPositive(),
                     newReview.getReviewId());
             return newReview;
         } catch (RuntimeException e) {
