@@ -7,7 +7,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import java.util.List;
@@ -95,7 +94,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
 
     // Добавление дизлайка к отзыву
     @Override
-    public void addDisike(int id, int userId) {
+    public void addDislike(int id, int userId) {
         insertTwoKeys(INSERT_QUERY_LIKE, id, userId, false);
     }
 
@@ -111,6 +110,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
         delete(DELETE_QUERY_LIKE, id, userId, false);
     }
 
+    // Получение количества лайков
     private int getLikes(int id) {
         List<Boolean> likes = jdbc.query(GET_QUERY_LIKES, (rs, rowNum) -> rs.getBoolean("is_like"), id);
         int useful = 0;

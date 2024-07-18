@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.service.ReviewService;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
 import ru.yandex.practicum.filmorate.validation.UpdateGroup;
-
 import java.util.List;
 
 
@@ -32,17 +31,17 @@ public class ReviewController {
     @PostMapping
     public Review addReview(@Validated(CreateGroup.class) @RequestBody Review review) {
         log.info("Добавляем новый отзыв: {}", review);
-        reviewService.addReview(review);
-        log.info("Отзыв успешно добавлен с ID: {}", review.getId());
+        review = reviewService.addReview(review);
+        log.info("Отзыв успешно добавлен с ID: {}", review.getReviewId());
         return review;
     }
 
     // Обновление существующего отзыва
     @PutMapping
     public Review updateReview(@Validated(UpdateGroup.class) @RequestBody Review newReview) {
-        log.info("Обновление отзыва с ID: {}", newReview.getId());
+        log.info("Обновление отзыва с ID: {}", newReview.getReviewId());
         Review updatedReview = reviewService.updateReview(newReview);
-        log.info("Отзыв с ID: {} успешно обновлен", newReview.getId());
+        log.info("Отзыв с ID: {} успешно обновлен", newReview.getReviewId());
         return updatedReview;
     }
 
