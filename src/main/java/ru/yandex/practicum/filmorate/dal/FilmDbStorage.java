@@ -134,6 +134,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         return film;
     }
 
+    //Получение популярных фильмов
     @Override
     public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
         StringBuilder sql = new StringBuilder(
