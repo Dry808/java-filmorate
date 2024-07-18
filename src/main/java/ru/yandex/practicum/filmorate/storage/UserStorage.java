@@ -21,6 +21,5 @@ public interface UserStorage {
 
     List<User> getFriends(int userId);
 
-
-
+    User deleteUserById(int userid);
 }

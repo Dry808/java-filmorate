@@ -13,7 +13,10 @@ import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 
 @Slf4j
@@ -36,6 +39,8 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "JOIN films_like fl2 ON f.id = fl2.film_id AND fl2.user_id = ? " +
             "GROUP BY f.id " +
             "ORDER BY COUNT(f.id) DESC";
+    private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE id = ?";
+    private static final String DELETE_ALL_LIKES_QUERY = "DELETE FROM films_like WHERE film_id = ?";
 
     private MpaService mpaService;
     private GenreService genreService;
@@ -130,6 +135,14 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     public List<Integer> getCommonFilms(int userId, int friendId) {
         List<Integer> filmIds = jdbc.query(FIND_COMMON_FILMS, (rs, rowNum) -> rs.getInt("id"), userId, friendId);
         return filmIds;
+    @Override
+    public Film deleteFilmById(int filmId) {
+        Film film = getFilmById(filmId);
+        delete(DELETE_ALL_LIKES_QUERY, filmId);
+        delete(DELETE_QUERY_GENRE, filmId);
+
+        delete(DELETE_FILM_QUERY, filmId);
+        return film;
     }
 
     // Получение лайков фильма

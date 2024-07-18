@@ -5,7 +5,10 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 
 @Slf4j
@@ -54,6 +57,9 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Deprecated
     public List<Integer> getCommonFilms(int userId, int friendId) {
         return List.of();
+      
+    public Film deleteFilmById(int filmId) {
+        return new Film();
     }
 
     // метод для генерации ID фильма
