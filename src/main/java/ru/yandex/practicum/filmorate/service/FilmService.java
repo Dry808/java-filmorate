@@ -79,7 +79,7 @@ public class FilmService {
 
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
-        filmStorage.removeLike(filmId,userId);
+        filmStorage.removeLike(filmId, userId);
     }
 
     // Получение топ-фильмов по лайкам
@@ -88,6 +88,10 @@ public class FilmService {
                 .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    public Film deleteFilmById(int filmId) {
+        return filmStorage.deleteFilmById(filmId);
     }
 
 }
