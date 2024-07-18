@@ -94,4 +94,9 @@ public class FilmService {
         return filmStorage.deleteFilmById(filmId);
     }
 
+    public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getMostPopularFilms(count, genreId, year);
+    }
+
+
 }

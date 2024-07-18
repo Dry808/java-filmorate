@@ -59,10 +59,16 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new Film();
     }
 
+    @Override
+    @Deprecated
+    public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
+        return new ArrayList<>();
+    }
+
+
     // метод для генерации ID фильма
     private int getNextFilmId() {
         return ++filmId;
     }
-
 
 }
