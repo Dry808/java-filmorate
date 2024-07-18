@@ -34,9 +34,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String FIND_USER_ID_FROM_LIKES = "SELECT user_id FROM films_like WHERE film_id = ?";
     private static final String INSERT_QUERY_LIKE = "INSERT INTO films_like(film_id, user_id) VALUES (?, ?)";
     private static final String DELETE_QUERY_LIKE = "DELETE FROM films_like WHERE film_id = ? AND user_id = ?";
+    private static final String FIND_COMMON_FILMS = "SELECT f.id FROM films f " +
+            "JOIN films_like fl1 ON f.id = fl1.film_id AND fl1.user_id = ? " +
+            "JOIN films_like fl2 ON f.id = fl2.film_id AND fl2.user_id = ? " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(f.id) DESC";
     private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE id = ?";
     private static final String DELETE_ALL_LIKES_QUERY = "DELETE FROM films_like WHERE film_id = ?";
-
 
     private MpaService mpaService;
     private GenreService genreService;
@@ -124,6 +128,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public void removeLike(int filmId, int userId) {
         delete(DELETE_QUERY_LIKE, filmId, userId);
+    }
+
+    // Получение ID общих фильмов
+    @Override
+    public List<Integer> getCommonFilms(int userId, int friendId) {
+        List<Integer> filmIds = jdbc.query(FIND_COMMON_FILMS, (rs, rowNum) -> rs.getInt("id"), userId, friendId);
+        return filmIds;
     }
 
     @Override
