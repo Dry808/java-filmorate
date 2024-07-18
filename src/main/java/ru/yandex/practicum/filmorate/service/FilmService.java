@@ -96,9 +96,9 @@ public class FilmService {
         return commonFilmsId.stream()
                 .map(this::getFilmById) // инициализация всех полей film
                 .collect(Collectors.toList());
+    }
 
     public Film deleteFilmById(int filmId) {
         return filmStorage.deleteFilmById(filmId);
     }
-
 }

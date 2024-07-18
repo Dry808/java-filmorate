@@ -135,6 +135,8 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     public List<Integer> getCommonFilms(int userId, int friendId) {
         List<Integer> filmIds = jdbc.query(FIND_COMMON_FILMS, (rs, rowNum) -> rs.getInt("id"), userId, friendId);
         return filmIds;
+    }
+
     @Override
     public Film deleteFilmById(int filmId) {
         Film film = getFilmById(filmId);
