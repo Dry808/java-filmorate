@@ -65,7 +65,7 @@ public class ReviewController {
         if (filmId == null) {
             log.info("Получение всех отзывов");
         } else {
-            log.info("Получение" + count + " отзывов к фильму " + filmId);
+            log.info("Получение " + count + " отзывов к фильму " + filmId);
         }
         return reviewService.getReviews(filmId, count);
     }

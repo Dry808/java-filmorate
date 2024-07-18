@@ -39,10 +39,13 @@ public class ReviewService {
     // Получение отзывов
     public List<Review> getReviews(Integer filmId, Integer count) {
         if (filmId == null) {
-            return reviewStorage.getAllReviews();
+            return reviewStorage.getAllReviews().stream()
+                    .sorted((x1, x2) -> x2.getUseful() - x1.getUseful())
+                    .collect(Collectors.toList());
         } else {
             return reviewStorage.getAllReviews().stream()
                     .filter(x -> x.getFilmId() == filmId)
+                    .sorted((x1, x2) -> x2.getUseful() - x1.getUseful())
                     .limit(count)
                     .collect(Collectors.toList());
         }

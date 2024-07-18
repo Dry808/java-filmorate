@@ -11,6 +11,7 @@ public class ReviewRowMapper implements RowMapper<Review> {
     @Override
     public Review mapRow(ResultSet rs, int rowNum) throws SQLException {
         Review review = new Review();
+        review.setReviewId(rs.getInt("id"));
         review.setUserId(rs.getInt("user_id"));
         review.setFilmId(rs.getInt("film_id"));
         review.setContent(rs.getString("content"));
