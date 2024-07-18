@@ -51,3 +51,21 @@ CREATE TABLE IF NOT EXISTS film_genres (
   FOREIGN KEY (genre_id) REFERENCES genre(id)
 );
 
+CREATE TABLE IF NOT EXISTS reviews (
+  id INT AUTO_INCREMENT PRIMARY KEY,
+  film_id INT,
+  user_id INT,
+  content TEXT,
+  is_positive BOOLEAN,
+  FOREIGN KEY (film_id) REFERENCES films(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+
+CREATE TABLE IF NOT EXISTS review_likes (
+  review_id INT,
+  user_id INT,
+  is_like BOOLEAN,
+  PRIMARY KEY (review_id, user_id),
+  FOREIGN KEY (review_id) REFERENCES reviews(id),
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
