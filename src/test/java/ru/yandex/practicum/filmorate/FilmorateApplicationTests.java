@@ -8,17 +8,9 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.ContextConfiguration;
 import ru.yandex.practicum.filmorate.dal.*;
-import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
-import ru.yandex.practicum.filmorate.dal.mappers.GenreRowMapper;
-import ru.yandex.practicum.filmorate.dal.mappers.MpaRowMapper;
-import ru.yandex.practicum.filmorate.dal.mappers.UserRowMapper;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Genre;
-import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.service.GenreService;
-import ru.yandex.practicum.filmorate.service.MpaService;
-import ru.yandex.practicum.filmorate.service.UserService;
+import ru.yandex.practicum.filmorate.dal.mappers.*;
+import ru.yandex.practicum.filmorate.model.*;
+import ru.yandex.practicum.filmorate.service.*;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -31,16 +23,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ContextConfiguration(classes = {UserDbStorage.class, UserRowMapper.class, UserService.class,
 		FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
-		MpaDbStorage.class, MpaRowMapper.class, MpaService.class})
+		MpaDbStorage.class, MpaRowMapper.class, MpaService.class, ReviewDbStorage.class, ReviewRowMapper.class, ReviewService.class})
 class FilmorateApplicationTests {
 	private final UserDbStorage userStorage;
 	private final FilmDbStorage filmStorage;
 	private final GenreDbStorage genreStorage;
 	private final MpaDbStorage mpaStorage;
+	private final ReviewDbStorage reviewStorage;
 	private User user;
 	private User secondUser;
 	private Film film;
 	private Film secondFilm;
+	private Review review;
+	private Review secondReview;
 
 	@BeforeEach
 	public void beforeEach() {
@@ -75,6 +70,10 @@ class FilmorateApplicationTests {
 				.mpa(new Mpa(1, "G"))
 				.genres(Set.of(new Genre(2, "Драма")))
 				.build();
+
+		review = new Review(0, 1, 1, "It's a good movie", true, 0);
+
+		secondReview = new Review(0, 2, 1, "Very bad!", false, 0);
 	}
 
 	@Test
@@ -150,5 +149,86 @@ class FilmorateApplicationTests {
 	public void testMpaDbStorage() {
 		assertThat(mpaStorage.getMpaById(1)).hasFieldOrPropertyWithValue("name", "G");
 		assertThat(mpaStorage.getAllMpa()).isNotEmpty();
+	}
+
+	@Test
+	public void testAddAndGetReview() {
+		review.setFilmId(filmStorage.addFilm(film).getId());
+		review.setUserId(userStorage.addUser(user).getId());
+		reviewStorage.addReview(review);
+		Review thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(review).hasFieldOrPropertyWithValue("reviewId", review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("reviewId", review.getReviewId());
+	}
+
+	@Test
+	public void testUpdateReview() {
+		review.setFilmId(filmStorage.addFilm(film).getId());
+		review.setUserId(userStorage.addUser(user).getId());
+		reviewStorage.addReview(review);
+		review.setContent("Actually this movie is bad 😡");
+		review.setIsPositive(false);
+		reviewStorage.updateReview(review);
+		Review thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("reviewId", review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("content", review.getContent());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("isPositive", false);
+	}
+
+	@Test
+	public void testGetAllReviews() {
+		review.setFilmId(filmStorage.addFilm(film).getId());
+		secondReview.setFilmId(filmStorage.addFilm(secondFilm).getId());
+		review.setUserId(userStorage.addUser(user).getId());
+		secondReview.setUserId(review.getUserId());
+		reviewStorage.addReview(review);
+		reviewStorage.addReview(secondReview);
+		List<Review> reviews = reviewStorage.getAllReviews();
+		assertThat(reviews).isEqualTo(List.of(review, secondReview));
+	}
+
+	@Test
+	public void testDeleteReview() {
+		review.setFilmId(filmStorage.addFilm(film).getId());
+		secondReview.setFilmId(filmStorage.addFilm(secondFilm).getId());
+		review.setUserId(userStorage.addUser(user).getId());
+		secondReview.setUserId(review.getUserId());
+		reviewStorage.addReview(review);
+		reviewStorage.addReview(secondReview);
+		List<Review> reviews = reviewStorage.getAllReviews();
+		assertThat(reviews).isEqualTo(List.of(review, secondReview));
+		reviewStorage.deleteReviewById(review.getReviewId());
+		reviews = reviewStorage.getAllReviews();
+		assertThat(reviews).isEqualTo(List.of(secondReview));
+	}
+
+	@Test
+	public void testAddAndRemoveLikeReview() {
+		review.setFilmId(filmStorage.addFilm(film).getId());
+		review.setUserId(userStorage.addUser(user).getId());
+		reviewStorage.addReview(review);
+		Review thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("useful", 0);
+		reviewStorage.addLike(thatReview.getReviewId(), user.getId());
+		thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("useful", 1);
+		reviewStorage.removeLike(thatReview.getReviewId(), user.getId());
+		thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("useful", 0);
+	}
+
+	@Test
+	public void testAddAndRemoveDislikeReview() {
+		review.setFilmId(filmStorage.addFilm(film).getId());
+		review.setUserId(userStorage.addUser(user).getId());
+		reviewStorage.addReview(review);
+		Review thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("useful", 0);
+		reviewStorage.addDislike(thatReview.getReviewId(), user.getId());
+		thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("useful", -1);
+		reviewStorage.removeDislike(thatReview.getReviewId(), user.getId());
+		thatReview = reviewStorage.getReviewById(review.getReviewId());
+		assertThat(thatReview).hasFieldOrPropertyWithValue("useful", 0);
 	}
 }
