@@ -98,12 +98,11 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
-
-   // Сотрировка фильмов режиссера
+    // Сотрировка фильмов режиссера
     public List<Film> sortingFilms(int directorId, String sortBy) {
 
         Director director = directorDbStorage.getDirectorById(directorId);
-        if (director  == null) {
+        if (director == null) {
             log.error("Режиссера с ID: {} не существует", directorId);
             throw new NotFoundException("Режиссера с ID = " + directorId + " не существует");
         }
