@@ -31,6 +31,7 @@ public class DirectorService {
     public Director getDirectorById(int id) {
         return directorStorage.getDirectorById(id);
     }
+
     // Удаление режиссера
     public void removeDirector(int directorId) {
         Director director = directorStorage.getDirectorById(directorId);
