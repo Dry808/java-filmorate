@@ -26,7 +26,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
             "new_like(review_id, user_id, is_like) ON review_likes.review_id = new_like.review_id AND " +
             "review_likes.user_id = new_like.user_id WHEN MATCHED THEN UPDATE SET is_like = new_like.is_like " +
             "WHEN NOT MATCHED THEN INSERT (review_id, user_id, is_like) VALUES (new_like.review_id, new_like.user_id, " +
-            "new_like.is_like)";;
+            "new_like.is_like)";
     private static final String DELETE_QUERY_LIKE = "DELETE FROM review_likes WHERE review_id = ? AND user_id = ?";
     private static final String GET_QUERY_LIKES = "SELECT * FROM review_likes WHERE review_id = ?";
     private static final String FIND_ALL_QUERY = "SELECT * FROM reviews";
@@ -86,7 +86,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
     @Override
     public List<Review> getAllReviews() {
         List<Review> allReviews = findMany(FIND_ALL_QUERY);
-        allReviews.forEach(r -> {r.setUseful(getLikes(r.getReviewId())); });
+        allReviews.forEach(r -> r.setUseful(getLikes(r.getReviewId())));
         return allReviews;
     }
 
