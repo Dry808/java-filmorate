@@ -19,7 +19,7 @@ public class ReviewService {
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
 
-    public ReviewService (ReviewStorage reviewStorage, FilmStorage filmStorage, UserStorage userStorage) {
+    public ReviewService(ReviewStorage reviewStorage, FilmStorage filmStorage, UserStorage userStorage) {
         this.reviewStorage = reviewStorage;
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
