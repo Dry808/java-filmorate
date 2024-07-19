@@ -55,6 +55,10 @@ public class InMemoryFilmStorage implements FilmStorage {
 
     @Override
     @Deprecated
+    public List<Integer> getCommonFilms(int userId, int friendId) {
+        return List.of();
+    }
+
     public Film deleteFilmById(int filmId) {
         return new Film();
     }

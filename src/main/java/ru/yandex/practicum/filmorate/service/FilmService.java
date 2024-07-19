@@ -90,6 +90,14 @@ public class FilmService {
                 .collect(Collectors.toList());
     }
 
+    // Получение общих фильмов
+    public List<Film> getCommonFilms(int userId, int filmId) {
+        List<Integer> commonFilmsId = filmStorage.getCommonFilms(userId, filmId);
+        return commonFilmsId.stream()
+                .map(this::getFilmById) // инициализация всех полей film
+                .collect(Collectors.toList());
+    }
+
     public Film deleteFilmById(int filmId) {
         return filmStorage.deleteFilmById(filmId);
     }
@@ -97,6 +105,5 @@ public class FilmService {
     public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
         return filmStorage.getMostPopularFilms(count, genreId, year);
     }
-
 
 }
