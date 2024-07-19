@@ -77,4 +77,12 @@ public class FilmController {
         log.info("Получение топ-" + count + " фильмов по лайкам");
         return filmService.getTopFilms(count);
     }
+
+    //Сортировка фильмов режиссера
+    @GetMapping("/director/{directorId}")
+    public List<Film> sortingFilms(@PathVariable int directorId, @RequestParam String sortBy) {
+        log.info("Вывод всех фильмов режиссёра = " + directorId + ", отсортированных по - " + sortBy);
+        return filmService.sortingFilms(directorId, sortBy);
+    }
+
 }
