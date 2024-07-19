@@ -3,7 +3,9 @@ package ru.yandex.practicum.filmorate.service;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.dal.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
@@ -19,10 +21,12 @@ import java.util.stream.Collectors;
 public class FilmService {
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final FilmStorage filmStorage;
+    private final DirectorDbStorage directorDbStorage;
 
 
-    public FilmService(FilmStorage filmStorage) {
+    public FilmService(FilmStorage filmStorage, DirectorDbStorage directorDbStorage) {
         this.filmStorage = filmStorage;
+        this.directorDbStorage = directorDbStorage;
     }
 
     // Добавление фильма
@@ -58,6 +62,10 @@ public class FilmService {
             oldFilm.setDuration(newFilm.getDuration());
         }
 
+        if (newFilm.getDirectors() != null) {
+            oldFilm.setDirectors(newFilm.getDirectors());
+        }
+
         filmStorage.updateFilm(oldFilm);
 
         return oldFilm;
@@ -79,7 +87,7 @@ public class FilmService {
 
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
-        filmStorage.removeLike(filmId,userId);
+        filmStorage.removeLike(filmId, userId);
     }
 
     // Получение топ-фильмов по лайкам
@@ -88,6 +96,34 @@ public class FilmService {
                 .sorted(Comparator.comparingInt(Film::getLikesCount).reversed())
                 .limit(count)
                 .collect(Collectors.toList());
+    }
+
+    // Сотрировка фильмов режиссера
+    public List<Film> sortingFilms(int directorId, String sortBy) {
+
+        Director director = directorDbStorage.getDirectorById(directorId);
+        if (director == null) {
+            log.error("Режиссера с ID: {} не существует", directorId);
+            throw new NotFoundException("Режиссера с ID = " + directorId + " не существует");
+        }
+
+        return filmStorage.sortingFilms(directorId, sortBy);
+    }
+
+    // Получение общих фильмов
+    public List<Film> getCommonFilms(int userId, int filmId) {
+        List<Integer> commonFilmsId = filmStorage.getCommonFilms(userId, filmId);
+        return commonFilmsId.stream()
+                .map(this::getFilmById) // инициализация всех полей film
+                .collect(Collectors.toList());
+    }
+
+    public Film deleteFilmById(int filmId) {
+        return filmStorage.deleteFilmById(filmId);
+    }
+
+    public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
+        return filmStorage.getMostPopularFilms(count, genreId, year);
     }
 
 }

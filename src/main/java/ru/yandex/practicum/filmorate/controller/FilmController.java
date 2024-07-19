@@ -62,19 +62,45 @@ public class FilmController {
 
     @PutMapping("/{id}/like/{userId}")
     public void addLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.addLike(id,userId);
+        filmService.addLike(id, userId);
         log.info("Фильм с Id=" + id + " лайкнул пользователь с id=" + userId);
     }
 
     @DeleteMapping("/{id}/like/{userId}")
     public void removeLike(@PathVariable int id, @PathVariable int userId) {
-        filmService.removeLike(id,userId);
+        filmService.removeLike(id, userId);
         log.info("Пользователь с id=" + userId + " убрал лайк с фильма с id=" + id);
     }
 
+
+
+    //Сортировка фильмов режиссера
+    @GetMapping("/director/{directorId}")
+    public List<Film> sortingFilms(@PathVariable int directorId, @RequestParam String sortBy) {
+        log.info("Вывод всех фильмов режиссёра = " + directorId + ", отсортированных по - " + sortBy);
+        return filmService.sortingFilms(directorId, sortBy);
+    }
+
+
+    @GetMapping("/common")
+    public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
+        log.info("Получение списка общих фильмов пользователя с ID=" + userId + " и ID=" + friendId);
+        return filmService.getCommonFilms(userId, friendId);
+    }
+
+    //Удаление фильма по id
+    @DeleteMapping("/{filmId}")
+    public Film deleteFilm(@PathVariable int filmId) {
+        log.info("Фильм удален id=" + filmId);
+        return filmService.deleteFilmById(filmId);
+    }
+
+    //Получение популярный фильмов по лайкам
     @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam(defaultValue = "10") int count) {
-        log.info("Получение топ-" + count + " фильмов по лайкам");
-        return filmService.getTopFilms(count);
+    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count,
+                                          @RequestParam(required = false) Integer genreId,
+                                          @RequestParam(required = false) Integer year) {
+        log.info("Запрос на получение {} самых популярных фильмов жанра {} за год {}", count, genreId, year);
+        return filmService.getMostPopularFilms(count, genreId, year);
     }
 }

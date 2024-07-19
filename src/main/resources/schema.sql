@@ -69,3 +69,16 @@ CREATE TABLE IF NOT EXISTS review_likes (
   FOREIGN KEY (review_id) REFERENCES reviews(id),
   FOREIGN KEY (user_id) REFERENCES users(id)
 );
+
+CREATE TABLE IF NOT EXISTS directors (
+  director_id INT AUTO_INCREMENT PRIMARY KEY,
+  director_name VARCHAR(200)
+);
+
+CREATE TABLE IF NOT EXISTS film_director (
+  film_id INT NOT NULL,
+  director_id INT NOT NULL,
+  PRIMARY KEY (film_id, director_id),
+  FOREIGN KEY (film_id) REFERENCES films(id),
+  FOREIGN KEY (director_id) REFERENCES directors(director_id)
+);

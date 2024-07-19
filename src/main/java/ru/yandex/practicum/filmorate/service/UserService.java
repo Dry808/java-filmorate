@@ -9,7 +9,6 @@ import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -103,5 +102,9 @@ public class UserService {
         return user1.stream()
                 .filter(user2::contains)
                 .collect(Collectors.toList());
+    }
+
+    public User deleteUserById(int userId) {
+        return userStorage.deleteUserById(userId);
     }
 }

@@ -23,7 +23,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ContextConfiguration(classes = {UserDbStorage.class, UserRowMapper.class, UserService.class,
 		FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
-		MpaDbStorage.class, MpaRowMapper.class, MpaService.class, ReviewDbStorage.class, ReviewRowMapper.class, ReviewService.class})
+		MpaDbStorage.class, MpaRowMapper.class, MpaService.class, DirectorService.class, DirectorDbStorage.class,
+		DirectorRowMapper.class, ReviewDbStorage.class, ReviewRowMapper.class, ReviewService.class})
 class FilmorateApplicationTests {
 	private final UserDbStorage userStorage;
 	private final FilmDbStorage filmStorage;
