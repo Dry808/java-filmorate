@@ -8,14 +8,12 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.test.context.ContextConfiguration;
 import ru.yandex.practicum.filmorate.dal.*;
-import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
-import ru.yandex.practicum.filmorate.dal.mappers.GenreRowMapper;
-import ru.yandex.practicum.filmorate.dal.mappers.MpaRowMapper;
-import ru.yandex.practicum.filmorate.dal.mappers.UserRowMapper;
+import ru.yandex.practicum.filmorate.dal.mappers.*;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.DirectorService;
 import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.service.UserService;
@@ -31,7 +29,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @ContextConfiguration(classes = {UserDbStorage.class, UserRowMapper.class, UserService.class,
 		FilmDbStorage.class, FilmRowMapper.class, GenreDbStorage.class, GenreRowMapper.class, GenreService.class,
-		MpaDbStorage.class, MpaRowMapper.class, MpaService.class})
+		MpaDbStorage.class, MpaRowMapper.class, MpaService.class, DirectorService.class, DirectorDbStorage.class,
+		DirectorRowMapper.class})
 class FilmorateApplicationTests {
 	private final UserDbStorage userStorage;
 	private final FilmDbStorage filmStorage;

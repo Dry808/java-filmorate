@@ -54,6 +54,10 @@ public class InMemoryFilmStorage implements FilmStorage {
     }
 
     @Override
+    public List<Film> sortingFilms(int directorId, String sortBy) {
+        return null;
+    }
+
     @Deprecated
     public List<Integer> getCommonFilms(int userId, int friendId) {
         return List.of();
@@ -74,5 +78,4 @@ public class InMemoryFilmStorage implements FilmStorage {
     private int getNextFilmId() {
         return ++filmId;
     }
-
 }
