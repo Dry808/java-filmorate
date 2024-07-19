@@ -72,11 +72,6 @@ public class FilmController {
         log.info("Пользователь с id=" + userId + " убрал лайк с фильма с id=" + id);
     }
 
-    @GetMapping("/popular")
-    public List<Film> getTopFilms(@RequestParam(defaultValue = "10") int count) {
-        log.info("Получение топ-" + count + " фильмов по лайкам");
-        return filmService.getTopFilms(count);
-    }
 
 
     //Сортировка фильмов режиссера
@@ -98,5 +93,14 @@ public class FilmController {
     public Film deleteFilm(@PathVariable int filmId) {
         log.info("Фильм удален id=" + filmId);
         return filmService.deleteFilmById(filmId);
+    }
+
+    //Получение популярный фильмов по лайкам
+    @GetMapping("/popular")
+    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count,
+                                          @RequestParam(required = false) Integer genreId,
+                                          @RequestParam(required = false) Integer year) {
+        log.info("Запрос на получение {} самых популярных фильмов жанра {} за год {}", count, genreId, year);
+        return filmService.getMostPopularFilms(count, genreId, year);
     }
 }

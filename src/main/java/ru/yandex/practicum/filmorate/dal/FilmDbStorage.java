@@ -6,6 +6,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
+import ru.yandex.practicum.filmorate.dal.mappers.FilmRowMapper;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
@@ -15,10 +16,7 @@ import ru.yandex.practicum.filmorate.service.GenreService;
 import ru.yandex.practicum.filmorate.service.MpaService;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 
 @Slf4j
@@ -174,6 +172,46 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         delete(DELETE_FILM_QUERY, filmId);
         return film;
     }
+
+    //Получение популярных фильмов
+    @Override
+    public List<Film> getMostPopularFilms(Integer count, Integer genreId, Integer year) {
+        StringBuilder sql = new StringBuilder(
+                "SELECT f.*, COUNT(fl.user_id) as likes " +
+                        "FROM films f " +
+                        "LEFT JOIN films_like fl ON f.id = fl.film_id " +
+                        "LEFT JOIN film_genres fg ON f.id = fg.film_id "
+        );
+
+        List<Object> params = new ArrayList<>();
+        boolean whereAdded = false;
+
+        if (genreId != null) {
+            sql.append("WHERE fg.genre_id = ? ");
+            params.add(genreId);
+            whereAdded = true;
+        }
+
+        if (year != null) {
+            if (whereAdded) {
+                sql.append("AND YEAR(f.release_date) = ? ");
+            } else {
+                sql.append("WHERE YEAR(f.release_date) = ? ");
+            }
+            params.add(year);
+        }
+
+        sql.append("GROUP BY f.id ")
+                .append("ORDER BY likes DESC ");
+
+        if (count != null) {
+            sql.append("LIMIT ?");
+            params.add(count);
+        }
+
+        return jdbc.query(sql.toString(), params.toArray(), new FilmRowMapper());
+    }
+
 
     // Получение лайков фильма
     private Set<Integer> getLikes(int filmId) {
