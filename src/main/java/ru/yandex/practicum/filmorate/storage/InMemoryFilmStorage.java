@@ -56,6 +56,13 @@ public class InMemoryFilmStorage implements FilmStorage {
     @Override
     public List<Film> sortingFilms(int directorId, String sortBy) {
         return null;
+    @Deprecated
+    public List<Integer> getCommonFilms(int userId, int friendId) {
+        return List.of();
+    }
+
+    public Film deleteFilmById(int filmId) {
+        return new Film();
     }
 
     // метод для генерации ID фильма

@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.storage.MpaStorage;
 
 import java.util.List;
 import java.util.Optional;
+
 /**
  * Класс для взаимодействия Рейтингов(Mpa) с БД
  */
@@ -23,7 +24,7 @@ public class MpaDbStorage extends BaseRepository<Mpa> implements MpaStorage {
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM films_rating WHERE id = ?";
 
     public MpaDbStorage(JdbcTemplate jdbc, RowMapper<Mpa> mapper) {
-        super(jdbc,mapper);
+        super(jdbc, mapper);
     }
 
     @Override

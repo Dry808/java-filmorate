@@ -44,6 +44,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "LEFT JOIN FILMS_LIKE fl ON f.ID = fl.FILM_ID WHERE fl.FILM_ID IN (SELECT FILM_ID FROM FILM_DIRECTOR fd " +
             "WHERE DIRECTOR_ID = ?) GROUP BY f.ID ORDER BY COUNT(*) DESC) SELECT ID, NAME, DESCRIPTION, RELEASE_DATE, " +
             "DURATION, RATING_ID FROM film_count_like";
+    private static final String FIND_COMMON_FILMS = "SELECT f.id FROM films f " +
+            "JOIN films_like fl1 ON f.id = fl1.film_id AND fl1.user_id = ? " +
+            "JOIN films_like fl2 ON f.id = fl2.film_id AND fl2.user_id = ? " +
+            "GROUP BY f.id " +
+            "ORDER BY COUNT(f.id) DESC";
+    private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE id = ?";
+    private static final String DELETE_ALL_LIKES_QUERY = "DELETE FROM films_like WHERE film_id = ?";
 
     private MpaService mpaService;
     private GenreService genreService;
@@ -149,6 +156,23 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     @Override
     public void removeLike(int filmId, int userId) {
         delete(DELETE_QUERY_LIKE, filmId, userId);
+    }
+
+    // Получение ID общих фильмов
+    @Override
+    public List<Integer> getCommonFilms(int userId, int friendId) {
+        List<Integer> filmIds = jdbc.query(FIND_COMMON_FILMS, (rs, rowNum) -> rs.getInt("id"), userId, friendId);
+        return filmIds;
+    }
+
+    @Override
+    public Film deleteFilmById(int filmId) {
+        Film film = getFilmById(filmId);
+        delete(DELETE_ALL_LIKES_QUERY, filmId);
+        delete(DELETE_QUERY_GENRE, filmId);
+
+        delete(DELETE_FILM_QUERY, filmId);
+        return film;
     }
 
     // Получение лайков фильма
