@@ -6,7 +6,9 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dal.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
+import ru.yandex.practicum.filmorate.model.EventTypes;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
@@ -22,11 +24,13 @@ public class FilmService {
     private static final LocalDate CINEMA_BIRTHDAY = LocalDate.of(1895, 12, 28);
     private final FilmStorage filmStorage;
     private final DirectorDbStorage directorDbStorage;
+    private final EventFeedService eventFeedService;
 
 
-    public FilmService(FilmStorage filmStorage, DirectorDbStorage directorDbStorage) {
+    public FilmService(FilmStorage filmStorage, DirectorDbStorage directorDbStorage, EventFeedService eventFeedService) {
         this.filmStorage = filmStorage;
         this.directorDbStorage = directorDbStorage;
+        this.eventFeedService = eventFeedService;
     }
 
     // Добавление фильма
@@ -83,11 +87,13 @@ public class FilmService {
     // Добавление лайка фильму
     public void addLike(int filmId, int userId) {
         filmStorage.addLike(filmId, userId);
+        eventFeedService.createEventFeed(userId, EventTypes.LIKE, Operations.ADD, filmId); // Запись события в БД
     }
 
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
         filmStorage.removeLike(filmId, userId);
+        eventFeedService.createEventFeed(userId, EventTypes.LIKE, Operations.REMOVE, filmId); // Запись события в БД
     }
 
     // Получение топ-фильмов по лайкам

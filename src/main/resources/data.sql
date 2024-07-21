@@ -21,3 +21,5 @@ UNION ALL
 SELECT 5, 'Документальный' WHERE NOT EXISTS (SELECT 1 FROM genre WHERE id = 5)
 UNION ALL
 SELECT 6, 'Боевик' WHERE NOT EXISTS (SELECT 1 FROM genre WHERE id = 6);
+
+
