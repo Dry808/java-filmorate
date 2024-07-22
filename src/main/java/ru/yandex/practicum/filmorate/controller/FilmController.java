@@ -72,15 +72,12 @@ public class FilmController {
         log.info("Пользователь с id=" + userId + " убрал лайк с фильма с id=" + id);
     }
 
-
-
     //Сортировка фильмов режиссера
     @GetMapping("/director/{directorId}")
     public List<Film> sortingFilms(@PathVariable int directorId, @RequestParam String sortBy) {
         log.info("Вывод всех фильмов режиссёра = " + directorId + ", отсортированных по - " + sortBy);
         return filmService.sortingFilms(directorId, sortBy);
     }
-
 
     @GetMapping("/common")
     public List<Film> getCommonFilms(@RequestParam int userId, @RequestParam int friendId) {
@@ -97,7 +94,7 @@ public class FilmController {
 
     //Получение популярный фильмов по лайкам
     @GetMapping("/popular")
-    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count,
+    public List<Film> getMostPopularFilms(@RequestParam(required = false) Integer count,
                                           @RequestParam(required = false) Integer genreId,
                                           @RequestParam(required = false) Integer year) {
         log.info("Запрос на получение {} самых популярных фильмов жанра {} за год {}", count, genreId, year);

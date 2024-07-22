@@ -82,3 +82,14 @@ CREATE TABLE IF NOT EXISTS film_director (
   FOREIGN KEY (film_id) REFERENCES films(id),
   FOREIGN KEY (director_id) REFERENCES directors(director_id)
 );
+
+CREATE TABLE IF NOT EXISTS event_feed (
+  event_id INT AUTO_INCREMENT PRIMARY KEY,
+  user_id INT,
+  times_tamp TIMESTAMP,
+  event_type VARCHAR(200),
+  operation VARCHAR(200),
+  entity_id INT,
+  FOREIGN KEY (user_id) REFERENCES users(id)
+);
+

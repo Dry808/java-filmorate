@@ -4,6 +4,8 @@ import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
+import ru.yandex.practicum.filmorate.model.EventTypes;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
@@ -19,9 +21,11 @@ public class UserService {
     private static final String STATUS_UNCONFIRMED = "unconfirmed";
     private static final String STATUS_CONFIRMED = "confirmed";
     private final UserStorage userStorage;
+    private final EventFeedService eventFeedService;
 
-    public UserService(UserStorage userStorage) {
+    public UserService(UserStorage userStorage, EventFeedService eventFeedService) {
         this.userStorage = userStorage;
+        this.eventFeedService = eventFeedService;
     }
 
     public User addUser(User user) {
@@ -80,6 +84,7 @@ public class UserService {
 
         }
         userStorage.addFriend(userId, friendId, status);
+        eventFeedService.createEventFeed(userId, EventTypes.FRIEND, Operations.ADD, friendId); // Запись события в БД
     }
 
     public void removeFriend(int userId, int friendId) {
@@ -89,6 +94,7 @@ public class UserService {
         if (friend.getFriends().contains(userId)) {
             userStorage.updateFriendStatus(friendId, userId, STATUS_UNCONFIRMED);
         }
+        eventFeedService.createEventFeed(userId, EventTypes.FRIEND, Operations.REMOVE, friendId); // Запись события в БД
     }
 
     public List<User> getFriends(int userId) {

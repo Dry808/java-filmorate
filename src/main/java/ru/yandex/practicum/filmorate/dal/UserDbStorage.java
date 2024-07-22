@@ -37,6 +37,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
             "INNER JOIN users ON user_friends.friend_id = users.id WHERE user_friends.user_id = ?";
     private static final String DELETE_USER_FRIENDS_QUERY = "DELETE FROM user_friends WHERE user_id = ? OR friend_id = ?";
     private static final String DELETE_USER_QUERY = "DELETE FROM users WHERE id = ?";
+    private static final String DELETE_USER_EVENT = "DELETE FROM event_feed WHERE user_id = ?";
 
 
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
@@ -107,6 +108,7 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
         User user = getUserById(userid);
 
         delete(DELETE_USER_FRIENDS_QUERY, userid, userid);
+        delete(DELETE_USER_EVENT, userid);
         delete(DELETE_USER_QUERY, userid);
 
         return user;
