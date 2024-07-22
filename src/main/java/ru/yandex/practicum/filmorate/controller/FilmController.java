@@ -94,7 +94,7 @@ public class FilmController {
 
     //Получение популярный фильмов по лайкам
     @GetMapping("/popular")
-    public List<Film> getMostPopularFilms(@RequestParam(defaultValue = "10") int count,
+    public List<Film> getMostPopularFilms(@RequestParam(required = false) Integer count,
                                           @RequestParam(required = false) Integer genreId,
                                           @RequestParam(required = false) Integer year) {
         log.info("Запрос на получение {} самых популярных фильмов жанра {} за год {}", count, genreId, year);
