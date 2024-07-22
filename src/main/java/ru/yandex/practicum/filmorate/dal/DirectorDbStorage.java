@@ -30,7 +30,6 @@ public class DirectorDbStorage extends BaseRepository<Director> implements Direc
             "FROM FILM_DIRECTOR fd\n" +
             "WHERE FILM_ID = ?);";
 
-
     public DirectorDbStorage(JdbcTemplate jdbc, RowMapper<Director> mapper) {
         super(jdbc, mapper);
     }
@@ -76,5 +75,4 @@ public class DirectorDbStorage extends BaseRepository<Director> implements Direc
                 new Director(rs.getInt("director_id"), rs.getString("director_name")), filmId);
         return new HashSet<>(directorList);
     }
-
 }

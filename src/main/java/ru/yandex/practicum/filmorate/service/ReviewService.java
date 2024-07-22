@@ -3,12 +3,15 @@ package ru.yandex.practicum.filmorate.service;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.model.EventTypes;
+import ru.yandex.practicum.filmorate.model.Operations;
 import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.storage.ReviewStorage;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -18,11 +21,13 @@ public class ReviewService {
     private final ReviewStorage reviewStorage;
     private final FilmStorage filmStorage;
     private final UserStorage userStorage;
+    private final EventFeedService eventFeedService;
 
-    public ReviewService(ReviewStorage reviewStorage, FilmStorage filmStorage, UserStorage userStorage) {
+    public ReviewService(ReviewStorage reviewStorage, FilmStorage filmStorage, UserStorage userStorage, EventFeedService eventFeedService) {
         this.reviewStorage = reviewStorage;
         this.filmStorage = filmStorage;
         this.userStorage = userStorage;
+        this.eventFeedService = eventFeedService;
     }
 
     // Добавление отзыва
@@ -33,7 +38,10 @@ public class ReviewService {
         }
         filmStorage.getFilmById(review.getFilmId());
         userStorage.getUserById(review.getUserId());
-        return reviewStorage.addReview(review);
+
+        Review review1 = reviewStorage.addReview(review);
+        eventFeedService.createEventFeed(review1.getUserId(), EventTypes.REVIEW, Operations.ADD, review1.getReviewId());
+        return review1;                                                                         // Запись события в БД
     }
 
     // Обновление отзыва
@@ -42,6 +50,8 @@ public class ReviewService {
         if (!validationResult.isValid()) { // проверка
             throw new ValidationException(validationResult.getCurrentError());
         }
+        eventFeedService.createEventFeed(newReview.getUserId(), EventTypes.REVIEW, Operations.UPDATE,
+                newReview.getReviewId()); // Запись события в БД
         return reviewStorage.updateReview(newReview);
     }
 
@@ -52,8 +62,10 @@ public class ReviewService {
 
     // Удаление отзыва
     public void deleteReviewById(int id) {
+        Review review = reviewStorage.getReviewById(id);
         reviewStorage.deleteReviewById(id);
-    }
+        eventFeedService.createEventFeed(review.getUserId(), EventTypes.REVIEW, Operations.REMOVE, review.getReviewId());
+    }                                                                                            // Запись события в БД
 
     // Получение отзывов
     public List<Review> getReviews(Integer filmId, Integer count) {

@@ -4,6 +4,7 @@ import jakarta.validation.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.EventFeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.storage.InMemoryFilmStorage;
 import ru.yandex.practicum.filmorate.storage.InMemoryUserStorage;
@@ -15,10 +16,11 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class UserControllerTest {
     private UserController userController;
+    private EventFeedService eventFeedService;
 
     @BeforeEach
     public void beforeEach() {
-        userController = new UserController(new UserService(new InMemoryUserStorage(), new InMemoryFilmStorage()));
+        userController = new UserController(new UserService(new InMemoryUserStorage(), new InMemoryFilmStorage(), eventFeedService), eventFeedService);
     }
 
     @Test

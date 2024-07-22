@@ -4,7 +4,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.EventFeed;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.EventFeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 import ru.yandex.practicum.filmorate.validation.CreateGroup;
 import ru.yandex.practicum.filmorate.validation.UpdateGroup;
@@ -20,11 +22,12 @@ import java.util.List;
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
+    private final EventFeedService eventFeedService;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, EventFeedService eventFeedService) {
         this.userService = userService;
+        this.eventFeedService = eventFeedService;
     }
-
 
     // Добавить пользователя
     @PostMapping
@@ -96,5 +99,12 @@ public class UserController {
     public List<Film> getRecommendations(@PathVariable int userId) {
         log.info("Получение рекомендаций фильмов для пользователя ID=" + userId);
         return userService.getRecommendations(userId);
+    }
+
+    //Просмотр последних событий на платформе
+    @GetMapping("/{id}/feed")
+    public List<EventFeed> viewRecentEvents(@PathVariable int id) {
+        log.info("Получение последних событий для пользователя с id - " + id);
+        return eventFeedService.viewRecentEvents(id);
     }
 }
