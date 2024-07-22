@@ -132,4 +132,13 @@ public class FilmService {
         return filmStorage.getMostPopularFilms(count, genreId, year);
     }
 
+    public List<Film> searchFilms(String query, String by) {
+        List<Film> filmsList = filmStorage.searchFilm(query, by);
+        return filmsList.stream()
+                .map(film -> getFilmById(film.getId()))
+                .peek(film -> film.setDirectors(directorDbStorage.getDirectorsFromFilm(film.getId())))
+                .collect(Collectors.toList());
+
+    }
+
 }

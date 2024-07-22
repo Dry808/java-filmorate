@@ -49,6 +49,15 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "ORDER BY COUNT(f.id) DESC";
     private static final String DELETE_FILM_QUERY = "DELETE FROM films WHERE id = ?";
     private static final String DELETE_ALL_LIKES_QUERY = "DELETE FROM films_like WHERE film_id = ?";
+    private static final String FIND_FILMS_BY_TITLE = "SELECT * FROM films WHERE LOWER(name) " +
+            "LIKE LOWER(CONCAT('%', ?, '%'))";
+    private static final String FIND_FILMS_BY_DIRECTOR = "SELECT f.* FROM films f " +
+            "JOIN film_director fd ON f.id = fd.film_id " +
+            "JOIN directors d ON fd.director_id = d.director_id WHERE LOWER(d.director_name) LIKE LOWER(CONCAT('%', ?, '%'))";
+    private static final String FIND_FILMS_BY_TITLE_AND_DIRECTOR = "SELECT f.* FROM films f WHERE LOWER(f.name) " +
+            "LIKE LOWER(CONCAT('%', ?, '%')) OR EXISTS (SELECT 1 FROM film_director fd JOIN directors d ON fd.director_id = d.director_id " +
+            "WHERE fd.film_id = f.id AND LOWER(d.director_name) LIKE LOWER(CONCAT('%', ?, '%')));";
+
 
     private MpaService mpaService;
     private GenreService genreService;
@@ -241,5 +250,25 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
         });
 
         return films;
+    }
+
+
+    public List<Film> searchFilm(String query, String by) {
+        List<Film> filmList = new ArrayList<>();
+        if (by.equals("title")) {
+            log.info("Поиск по названию фильма: " + query);
+            filmList = findMany(FIND_FILMS_BY_TITLE, query);
+        }
+
+        if (by.equals("director")) {
+            log.info("Поиск по режиссёру: " + query);
+            filmList = findMany(FIND_FILMS_BY_DIRECTOR, query);
+        }
+
+        if (by.equals("title,director")) {
+            log.info("Поиск по режиссёру и названию фильма: " + query);
+            filmList = findMany(FIND_FILMS_BY_TITLE_AND_DIRECTOR, query, query);
+        }
+        return filmList;
     }
 }
