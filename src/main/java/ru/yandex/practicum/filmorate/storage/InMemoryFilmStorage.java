@@ -73,6 +73,12 @@ public class InMemoryFilmStorage implements FilmStorage {
         return new ArrayList<>();
     }
 
+    @Override
+    @Deprecated
+    public List<Film> searchFilm(String query, String by) {
+        return List.of();
+    }
+
 
     // метод для генерации ID фильма
     private int getNextFilmId() {

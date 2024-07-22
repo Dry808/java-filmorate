@@ -100,4 +100,11 @@ public class FilmController {
         log.info("Запрос на получение {} самых популярных фильмов жанра {} за год {}", count, genreId, year);
         return filmService.getMostPopularFilms(count, genreId, year);
     }
+
+    //Поиск фильмов по режиссёру и названию
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam String query, @RequestParam(defaultValue = "title,director") String by) {
+        log.info("Поиск по фильмам");
+        return filmService.searchFilms(query, by);
+    }
 }
