@@ -101,7 +101,7 @@ public class FilmController {
         return filmService.getMostPopularFilms(count, genreId, year);
     }
 
-    //
+    //Поиск фильмов по режиссёру и названию
     @GetMapping("/search")
     public List<Film> searchFilms(@RequestParam String query, @RequestParam(defaultValue = "title,director") String by) {
         log.info("Поиск по фильмам");
