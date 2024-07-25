@@ -56,7 +56,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             "JOIN directors d ON fd.director_id = d.director_id WHERE LOWER(d.director_name) LIKE LOWER(CONCAT('%', ?, '%'))";
     private static final String FIND_FILMS_BY_TITLE_AND_DIRECTOR = "SELECT f.* FROM films f WHERE LOWER(f.name) " +
             "LIKE LOWER(CONCAT('%', ?, '%')) OR EXISTS (SELECT 1 FROM film_director fd JOIN directors d ON fd.director_id = d.director_id " +
-            "WHERE fd.film_id = f.id AND LOWER(d.director_name) LIKE LOWER(CONCAT('%', ?, '%')));";
+            "WHERE fd.film_id = f.id AND LOWER(d.director_name) LIKE LOWER(CONCAT('%', ?, '%'))) ORDER BY f.NAME DESC;";
 
 
     private MpaService mpaService;
