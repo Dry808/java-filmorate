@@ -18,8 +18,7 @@ import java.util.Optional;
 public class ReviewDbStorage extends BaseRepository<Review> implements ReviewStorage {
     private static final String INSERT_QUERY = "INSERT INTO reviews(film_id, user_id, content, is_positive)" +
             "VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE reviews SET  content = ?," +
-            "is_positive = ? WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE reviews SET content = ?, is_positive = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM reviews WHERE id = ?";
     private static final String DELETE_QUERY_REVIEW_LIKES = "DELETE FROM review_likes WHERE review_id = ?";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM reviews WHERE id = ?";
@@ -60,7 +59,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
                     newReview.getContent(),
                     newReview.getIsPositive(),
                     newReview.getReviewId());
-            return newReview;
+            return getReviewById(newReview.getReviewId());
         } catch (RuntimeException e) {
             throw new ValidationException(e.getMessage());
         }
