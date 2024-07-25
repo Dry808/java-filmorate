@@ -22,6 +22,7 @@ public class DirectorDbStorage extends BaseRepository<Director> implements Direc
     private static final String INSERT_QUERY = "INSERT INTO directors(director_name) VALUES (?)";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM directors WHERE director_id = ?";
     private static final String DELETE_DIRECTOR_QUERY = "DELETE FROM directors WHERE director_id = ?";
+    private static final String DELETE_FILM_DIRECTOR_QUERY = "DELETE FROM film_director WHERE director_id = ?";
     private static final String UPDATE_QUERY = "UPDATE directors SET director_name = ?" +
             "WHERE director_id = ?";
     private static final String FIND_DIRECTOR_BY_FILM = "SELECT *\n" +
@@ -65,6 +66,7 @@ public class DirectorDbStorage extends BaseRepository<Director> implements Direc
     // Удаление режиссера из БД
     @Override
     public void removeDirector(int directorId) {
+        delete(DELETE_FILM_DIRECTOR_QUERY, directorId);
         delete(DELETE_DIRECTOR_QUERY, directorId);
     }
 

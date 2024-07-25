@@ -220,7 +220,15 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
             params.add(count);
         }
 
-        return jdbc.query(sql.toString(), params.toArray(), new FilmRowMapper());
+        List<Film> allFilms = jdbc.query(sql.toString(), params.toArray(), new FilmRowMapper());
+        allFilms.forEach(film -> {
+            film.setGenres(genreService.getGenresFromFilm(film.getId())); //установить жанр
+            film.setLikes(getLikes(film.getId()));
+            film.setMpa(mpaService.getMpaById(film.getMpa().getId()));
+            film.setDirectors(directorService.getDirectorsFromFilm(film.getId()));
+        });
+
+        return allFilms;
     }
 
 
