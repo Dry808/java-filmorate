@@ -3,7 +3,7 @@ Template repository for Filmorate project.
 
 
 # Схема Базы данных
-![img.png](img.png)
+![img_1.png](img_1.png)
 
 ## Запросы
 - Получение всех фильмов:

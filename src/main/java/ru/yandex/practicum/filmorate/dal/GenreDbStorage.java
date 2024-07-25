@@ -29,7 +29,7 @@ public class GenreDbStorage extends BaseRepository<Genre> implements GenreStorag
 
 
     public GenreDbStorage(JdbcTemplate jdbc, RowMapper<Genre> mapper) {
-        super(jdbc,mapper);
+        super(jdbc, mapper);
     }
 
     // Получение списка всех жанров из БД

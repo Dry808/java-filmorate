@@ -2,6 +2,7 @@ package ru.yandex.practicum.filmorate.validation;
 
 import lombok.extern.slf4j.Slf4j;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Review;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.LocalDate;
@@ -69,6 +70,38 @@ public class ModelValidator {
             log.error(currentError);
             return new ValidationResult(false, currentError);
         }
+        return new ValidationResult(true);
+    }
+
+    public static ValidationResult validateReview(Review review) {
+        // Проверка содержимого отзыва
+        if (review.getContent() == null) {
+            String currentError = "Пустое содержимое";
+            log.error(currentError);
+            return new ValidationResult(false, currentError);
+        }
+
+        // Проверка наличия типа отзыва
+        if (review.getIsPositive() == null) {
+            String currentError = "Не указан тип отзыва";
+            log.error(currentError);
+            return new ValidationResult(false, currentError);
+        }
+
+        // Проверка наличия пользователя в отзыве
+        if (review.getUserId() == 0) {
+            String currentError = "Не указан пользователь";
+            log.error(currentError);
+            return new ValidationResult(false, currentError);
+        }
+
+        // Проверка наличия фильма в отзыве
+        if (review.getFilmId() == 0) {
+            String currentError = "Не указан фильм";
+            log.error(currentError);
+            return new ValidationResult(false, currentError);
+        }
+
         return new ValidationResult(true);
     }
 }
