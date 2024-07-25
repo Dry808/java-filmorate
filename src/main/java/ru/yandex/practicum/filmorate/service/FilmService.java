@@ -5,17 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dal.DirectorDbStorage;
 import ru.yandex.practicum.filmorate.exception.NotFoundException;
-import ru.yandex.practicum.filmorate.model.Director;
-import ru.yandex.practicum.filmorate.model.EventTypes;
-import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.model.Operations;
+import ru.yandex.practicum.filmorate.model.*;
 import ru.yandex.practicum.filmorate.storage.FilmStorage;
 import ru.yandex.practicum.filmorate.validation.ModelValidator;
 import ru.yandex.practicum.filmorate.validation.ValidationResult;
 
 import java.time.LocalDate;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -38,6 +34,12 @@ public class FilmService {
         ValidationResult validationResult = ModelValidator.validateFilm(film);
         if (!validationResult.isValid()) { // проверка
             throw new ValidationException(validationResult.getCurrentError());
+        }
+
+        if (film.getGenres() != null) {
+            List<Genre> sortedGenres = new ArrayList<>(film.getGenres()); // сортировка для тестов постман
+            sortedGenres.sort(Comparator.comparing(Genre::getId));
+            film.setGenres(new LinkedHashSet<>(sortedGenres));
         }
         return filmStorage.addFilm(film);
     }
@@ -75,7 +77,11 @@ public class FilmService {
         }
 
         if (newFilm.getGenres() != null) {
+            List<Genre> sortedGenres = new ArrayList<>(newFilm.getGenres()); // сортировка для тестов постман
+            sortedGenres.sort(Comparator.comparing(Genre::getId));
+            newFilm.setGenres(new LinkedHashSet<>(sortedGenres));
             oldFilm.setGenres(newFilm.getGenres());
+
         }
 
         filmStorage.updateFilm(oldFilm);
