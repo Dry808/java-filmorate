@@ -21,12 +21,15 @@ public class FilmService {
     private final FilmStorage filmStorage;
     private final DirectorDbStorage directorDbStorage;
     private final EventFeedService eventFeedService;
+    private final UserService userService;
 
 
-    public FilmService(FilmStorage filmStorage, DirectorDbStorage directorDbStorage, EventFeedService eventFeedService) {
+    public FilmService(FilmStorage filmStorage, DirectorDbStorage directorDbStorage, EventFeedService eventFeedService,
+                       UserService userService) {
         this.filmStorage = filmStorage;
         this.directorDbStorage = directorDbStorage;
         this.eventFeedService = eventFeedService;
+        this.userService = userService;
     }
 
     // Добавление фильма
@@ -107,6 +110,7 @@ public class FilmService {
     // Удаление лайка с фильма
     public void removeLike(int filmId, int userId) {
         filmStorage.removeLike(filmId, userId);
+        userService.getUserById(userId); // проверка существования пользователя
         eventFeedService.createEventFeed(userId, EventTypes.LIKE, Operations.REMOVE, filmId); // Запись события в БД
     }
 
