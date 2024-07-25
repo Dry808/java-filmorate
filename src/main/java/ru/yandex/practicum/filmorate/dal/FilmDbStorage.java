@@ -38,10 +38,13 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
     private static final String DELETE_QUERY_LIKE = "DELETE FROM films_like WHERE film_id = ? AND user_id = ?";
     private static final String SORTING_FILMS_BY_YEARS = "SELECT * FROM FILMS f WHERE ID IN" +
             " (SELECT FILM_ID FROM FILM_DIRECTOR fd WHERE fd.DIRECTOR_ID = ?) ORDER BY RELEASE_DATE;";
-    private static final String SORTING_FILMS_BY_LIKES = "WITH film_count_like AS (SELECT f.*, COUNT(*) FROM FILMS f " +
-            "LEFT JOIN FILMS_LIKE fl ON f.ID = fl.FILM_ID WHERE fl.FILM_ID IN (SELECT FILM_ID FROM FILM_DIRECTOR fd " +
-            "WHERE DIRECTOR_ID = ?) GROUP BY f.ID ORDER BY COUNT(*) DESC) SELECT ID, NAME, DESCRIPTION, RELEASE_DATE, " +
-            "DURATION, RATING_ID FROM film_count_like";
+    private static final String SORTING_FILMS_BY_LIKES = "SELECT f.id, f.name, f.description, f.release_date, " +
+            "f.duration, f.rating_id, COUNT(fl.user_id) as like_count " +
+            "FROM films f JOIN film_director fd ON f.id = fd.film_id " +
+            "LEFT JOIN films_like fl ON f.id = fl.film_id " +
+            "WHERE fd.director_id = ? " +
+            "GROUP BY f.id " +
+            "ORDER BY like_count DESC";
     private static final String FIND_COMMON_FILMS = "SELECT f.id FROM films f " +
             "JOIN films_like fl1 ON f.id = fl1.film_id AND fl1.user_id = ? " +
             "JOIN films_like fl2 ON f.id = fl2.film_id AND fl2.user_id = ? " +

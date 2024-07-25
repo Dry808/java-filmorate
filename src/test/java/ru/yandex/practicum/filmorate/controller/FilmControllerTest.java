@@ -6,7 +6,6 @@ import org.junit.jupiter.api.Test;
 
 
 import ru.yandex.practicum.filmorate.dal.DirectorDbStorage;
-import ru.yandex.practicum.filmorate.dal.UserDbStorage;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.service.EventFeedService;
 import ru.yandex.practicum.filmorate.service.FilmService;
