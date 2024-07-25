@@ -88,6 +88,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                     insertTwoKeys(INSERT_QUERY_GENRE, id, genre.getId());
                 }
             }
+
             //добавление режиссеров
             if (film.getDirectors() != null) {
                 for (Director director : film.getDirectors()) {
@@ -119,6 +120,7 @@ public class FilmDbStorage extends BaseRepository<Film> implements FilmStorage {
                 insertTwoKeys(INSERT_QUERY_GENRE, film.getId(), genre.getId());
             }
         }
+
         // Удаление предыдущих режиссеров и вставка новых если они есть
         if (film.getDirectors() != null) {
             delete(DELETE_QUERY_DIRECTOR, film.getId()); // Удаление старого режиссера

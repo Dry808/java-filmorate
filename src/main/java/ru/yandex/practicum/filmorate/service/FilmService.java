@@ -70,6 +70,14 @@ public class FilmService {
             oldFilm.setDirectors(newFilm.getDirectors());
         }
 
+        if (newFilm.getMpa() != null) {
+            oldFilm.setMpa(newFilm.getMpa());
+        }
+
+        if (newFilm.getGenres() != null) {
+            oldFilm.setGenres(newFilm.getGenres());
+        }
+
         filmStorage.updateFilm(oldFilm);
 
         return oldFilm;
