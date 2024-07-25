@@ -18,9 +18,9 @@ import java.util.Optional;
 public class ReviewDbStorage extends BaseRepository<Review> implements ReviewStorage {
     private static final String INSERT_QUERY = "INSERT INTO reviews(film_id, user_id, content, is_positive)" +
             "VALUES (?, ?, ?, ?)";
-    private static final String UPDATE_QUERY = "UPDATE reviews SET film_id = ?, user_id = ?, content = ?," +
-            "is_positive = ? WHERE id = ?";
+    private static final String UPDATE_QUERY = "UPDATE reviews SET content = ?, is_positive = ? WHERE id = ?";
     private static final String DELETE_QUERY = "DELETE FROM reviews WHERE id = ?";
+    private static final String DELETE_QUERY_REVIEW_LIKES = "DELETE FROM review_likes WHERE review_id = ?";
     private static final String FIND_BY_ID_QUERY = "SELECT * FROM reviews WHERE id = ?";
     private static final String INSERT_QUERY_LIKE = "MERGE INTO review_likes USING VALUES (?, ?, ?) AS " +
             "new_like(review_id, user_id, is_like) ON review_likes.review_id = new_like.review_id AND " +
@@ -56,12 +56,10 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
     public Review updateReview(Review newReview) {
         try {
             update(UPDATE_QUERY,
-                    newReview.getFilmId(),
-                    newReview.getUserId(),
                     newReview.getContent(),
                     newReview.getIsPositive(),
                     newReview.getReviewId());
-            return newReview;
+            return getReviewById(newReview.getReviewId());
         } catch (RuntimeException e) {
             throw new ValidationException(e.getMessage());
         }
@@ -79,6 +77,7 @@ public class ReviewDbStorage extends BaseRepository<Review> implements ReviewSto
     // Удаление отзыва из БД по id
     @Override
     public void deleteReviewById(int id) {
+        delete(DELETE_QUERY_REVIEW_LIKES, id);
         delete(DELETE_QUERY, id);
     }
 

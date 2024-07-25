@@ -61,7 +61,7 @@ public class ReviewController {
 
     // Получение отзывов по идентификатору фильма
     @GetMapping()
-    public List<Review> getReviews(@RequestParam Integer filmId, @RequestParam(defaultValue = "10") Integer count) {
+    public List<Review> getReviews(@RequestParam(required = false) Integer filmId, @RequestParam(defaultValue = "10") Integer count) {
         if (filmId == null) {
             log.info("Получение всех отзывов");
         } else {

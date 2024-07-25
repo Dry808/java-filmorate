@@ -14,6 +14,7 @@ import ru.yandex.practicum.filmorate.validation.UpdateGroup;
 
 import java.time.LocalDate;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 /**
@@ -35,7 +36,7 @@ public class Film {
     //@JsonSerialize(using = DurationSerializer.class)
     private Integer duration;
     private Set<Integer> likes = new HashSet<>();
-    private Set<Genre> genres = new HashSet<>();
+    private Set<Genre> genres = new LinkedHashSet<>();
     private Mpa mpa;
     private Set<Director> directors = new HashSet<>();
 
