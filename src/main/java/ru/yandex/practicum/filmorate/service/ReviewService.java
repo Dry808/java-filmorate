@@ -50,9 +50,11 @@ public class ReviewService {
         if (!validationResult.isValid()) { // проверка
             throw new ValidationException(validationResult.getCurrentError());
         }
-        eventFeedService.createEventFeed(newReview.getUserId(), EventTypes.REVIEW, Operations.UPDATE,
-                newReview.getReviewId()); // Запись события в БД
-        return reviewStorage.updateReview(newReview);
+        Review review = reviewStorage.updateReview(newReview);
+
+        eventFeedService.createEventFeed(reviewStorage.getReviewById(review.getReviewId()).getUserId(), EventTypes.REVIEW, Operations.UPDATE,
+                review.getReviewId()); // Запись события в БД
+        return review;
     }
 
     // Получение отзыва
