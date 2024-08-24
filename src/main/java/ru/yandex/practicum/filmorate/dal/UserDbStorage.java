@@ -9,7 +9,9 @@ import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.UserStorage;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 /**
@@ -31,8 +33,12 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     private static final String UPDATE_FRIEND_STATUS = "UPDATE user_friends SET friendship_status = ? " +
             "WHERE user_id = ? AND friend_id = ?";
     private static final String FIND_USER_FRIENDS_ID = "SELECT friend_id FROM user_friends WHERE user_id = ?";
-    private static final String FIND_USER_FRIENDS =  "SELECT friend_id as id, email, login, name, birthday FROM user_friends " +
+    private static final String FIND_USER_FRIENDS = "SELECT friend_id as id, email, login, name, birthday FROM user_friends " +
             "INNER JOIN users ON user_friends.friend_id = users.id WHERE user_friends.user_id = ?";
+    private static final String DELETE_USER_FRIENDS_QUERY = "DELETE FROM user_friends WHERE user_id = ? OR friend_id = ?";
+    private static final String DELETE_USER_QUERY = "DELETE FROM users WHERE id = ?";
+    private static final String DELETE_USER_EVENT = "DELETE FROM event_feed WHERE user_id = ?";
+
 
     public UserDbStorage(JdbcTemplate jdbc, RowMapper<User> mapper) {
         super(jdbc, mapper);
@@ -95,6 +101,17 @@ public class UserDbStorage extends BaseRepository<User> implements UserStorage {
     @Override
     public List<User> getFriends(int userId) {
         return findMany(FIND_USER_FRIENDS, userId);
+    }
+
+    @Override
+    public User deleteUserById(int userid) {
+        User user = getUserById(userid);
+
+        delete(DELETE_USER_FRIENDS_QUERY, userid, userid);
+        delete(DELETE_USER_EVENT, userid);
+        delete(DELETE_USER_QUERY, userid);
+
+        return user;
     }
 
     // Получение списка ID друзей
